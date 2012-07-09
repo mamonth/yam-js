@@ -1,21 +1,20 @@
 /**
- * App Module Interface
+ * Routed module interface
  *
  * @author Max Maximov <max.maximov@gmail.com>
  * @version 0.2.1
  */
 define("app/IModule", ["app/Hub", "app/Logger"], function(Hub, Logger) {
     "use strict";
-
+    
     $.Class.extend("app.IModule", {
         init: function() {
-            throw new Error(this.constructor.fullName + ": не реализован метод init");
         },
         run: function() {
-            throw new Error(this.constructor.fullName + ": не реализован метод run");
+            throw new Error( this.constructor.fullName + ": method run must be implemented.");
         },
         destruct: function() {
-            throw new Error(this.constructor.fullName + ": не реализован метод destruct");
+            throw new Error(this.constructor.fullName + ": method destruct must be implemented");
         }
     });
 
