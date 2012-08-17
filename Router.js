@@ -123,6 +123,25 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             return '';
         },
 
+        extractChunkURI: function(index) {
+            var uri   = this.getCurrentPath(),
+                chunk = undefined;
+
+            if(!isNaN(index)) {
+                if(typeof uri === 'string' && uri.length > 0) {
+                    if(uri.indexOf('/') >= 0) {
+                        var chunks = uri.split('/');
+
+                        if(chunks.length >= parseInt(index)) {
+                            chunk = chunks[parseInt(index)];
+                        }
+                    }
+                }
+            }
+
+            return chunk;
+        },
+
         buildParamsString: function( params )
         {
             var paramsString = '';
