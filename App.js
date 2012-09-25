@@ -228,7 +228,9 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
             this._ready = false;
             this._modulesToReady = {};
             app.App._whenReadies = [];
-            $(window).whenReadyKillall();
+
+            if( undefined !== (window).whenReadyKillall )
+                $(window).whenReadyKillall();
         },
 
         _setReady: function () {
