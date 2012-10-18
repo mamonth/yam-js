@@ -108,10 +108,10 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
                         // If oldValue is not undefined, then property has been modified early.
                         // And we must save name of modified variable.
                         if( oldValue !== undefined ) {
-                             if( this._modifies instanceof Array ) {
-                                 this._modifies.push( variable );
+                             if( this._modifiedProperties instanceof Array ) {
+                                 this._modifiedProperties.push( variable );
                              } else {
-                                 this._modifies = [ variable ];
+                                 this._modifiedProperties = [ variable ];
                              }
                         }
 
@@ -131,7 +131,10 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
              */
             id:undefined,
 
-            _modifies: undefined,
+            /**
+             * Array modified properties.
+             */
+            _modifiedProperties: undefined,
 
             /**
              * Class constructor
@@ -174,6 +177,15 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
                 //$( this ).triggerHandler( "objectChange", { property: variable, value: value, oldValue: oldValue } );
 
                 //console.log( "triggered", "propertyChange", { path: variable, value: value, oldValue: oldValue } );
+            },
+
+            /**
+             * Get array of modified properties.
+             *
+             * @return {Array}
+             */
+            getModifiedProperties: function() {
+                return ( this._modifiedProperties instanceof Array ) ? this._modifiedProperties : [] ;
             }
         }
     );
