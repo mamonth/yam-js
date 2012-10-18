@@ -108,10 +108,10 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
                         // If oldValue is not undefined, then property has been modified early.
                         // And we must save name of modified variable.
                         if( oldValue !== undefined ) {
-                             if( this.modifies instanceof Array ) {
-                                 this.modifies.push( variable );
+                             if( this._modifies instanceof Array ) {
+                                 this._modifies.push( variable );
                              } else {
-                                 this.modifies = [ variable ];
+                                 this._modifies = [ variable ];
                              }
                         }
 
@@ -130,7 +130,8 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
              * base identity property
              */
             id:undefined,
-            modifies: 'ffff',
+
+            _modifies: undefined,
 
             /**
              * Class constructor
