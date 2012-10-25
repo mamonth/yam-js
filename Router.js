@@ -202,7 +202,7 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
 
                     for( key = 1; key <= matches.length; key++ )
                     {
-                        params.push( matches[ key ] );
+                        if( matches[ key ] !== undefined ) params.push( matches[ key ] );
                     }
                 }
             }

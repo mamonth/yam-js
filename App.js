@@ -155,12 +155,12 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
             this._unready();
         },
 
-        _registerModule: function(className) {
+        _registerModule: function(className, params) {
             if (undefined === this._modules[className]) {
                 var classInstance = $.String.getObject(className , window, true);
 
                 if(classInstance && typeof classInstance == "function") {
-                    var module = new classInstance();
+                    var module = new classInstance( params );
 
                     Logger.log(module, "init");
 
@@ -189,7 +189,7 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
         },
 
         _onLoadModule: function (className, params) {
-            this._registerModule(className);
+            this._registerModule(className, params );
 
             if (this._modules[className] !== undefined && this._modules[className].run !== undefined) {
                 
