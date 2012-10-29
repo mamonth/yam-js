@@ -19,7 +19,7 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
 
         {
             _classDef: undefined,
-            _collection: [],
+            _collection: undefined,
             length: 0,
 
             /**
@@ -30,6 +30,7 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
             init: function( classDef, modelsArray ){
 
                 this._classDef = classDef;
+                this._collection = [];
 
                 if( undefined !== modelsArray && modelsArray instanceof Array ){
 
