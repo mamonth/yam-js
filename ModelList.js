@@ -126,8 +126,8 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
                 if( kLen ){
 
                     while( kLen-- ){
-                        this._collection.splice( kLen, 1 );
-                        this._trigger( { change: "remove", index: kLen, items: this._collection } );
+                        this._collection.splice( keys[kLen], 1 );
+                        this._trigger( { change: "remove", index: keys[kLen], items: [ model ] } );
 
                         this.length--;
                     }
