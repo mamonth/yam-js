@@ -184,6 +184,12 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
             },
             getArray: function(){
                 return this._collection;
+            },
+            clear: function() {
+                this._collection.length = 0;
+                this.length = this._collection.length;
+
+                this._trigger( { change: "remove", items: this._collection } );
             }
         }
     );

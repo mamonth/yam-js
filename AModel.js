@@ -155,11 +155,6 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
                     this[setter]( values[ param ] );
                 }
 
-                // if available identity property - register model
-                if( undefined !== this[ this.Class.getIdentity() ] ){
-
-                    app.ModelWatcher.register( this );
-                }
             },
 
             /**
