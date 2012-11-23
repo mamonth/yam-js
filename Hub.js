@@ -37,10 +37,9 @@ define("app/Hub", ["app/Logger"], function () {
         sub: function (channel, callback) {
             this.channels[channel] = true;
             app.Logger.info("Subscribed to channel \"" + channel + "\"");
-            //Logger.info(this, "subscribed to channel \"" + channel + "\"");
 
-            function wrapper() {
-                return callback.apply(this, Array.prototype.slice.call(arguments, 1));
+            function wrapper( event, data) {
+                return callback.call(this, data, event );
             }
 
             wrapper.guid = callback.guid = callback.guid || ($.guid ? $.guid++ : $.event.guid++);
@@ -60,9 +59,16 @@ define("app/Hub", ["app/Logger"], function () {
 
         unsub: function (channel, callback) {
             app.Logger.info("Unsubscribed from channel \"" + channel + "\"");
-            //Logger.info(this, "unsubscribed from channel \"" + channel + "\"");
-            delete(this.channels[channel]);
-            this._domNode.unbind(channel + ".app", callback);
+
+//            delete(this.channels[channel]);
+            if( undefined === callback ){
+                this._domNode.unbind(channel + ".app" );
+            } else if( typeof callback == "function"){
+                this._domNode.unbind(channel + ".app", callback);
+            } else if( typeof callback == "object" && callback.type !== undefined ){
+                this._domNode.unbind( callback );
+            }
+
         }
     },
     /* @prototype */
