@@ -67,9 +67,9 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
             getList: function ( identityArray ) {
                 // just as example, Mostly same as get()
 
-                var deferred = $.Deferred();
+                    var deferred = $.Deferred();
 
-                return deferred.promise();
+                    return deferred.promise();
             },
 
             /**
@@ -102,27 +102,14 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
 
                     this.prototype[ "set" + methodEnding ] = function (value) {
 
-                        var oldValue = this[ variable ];
-                        this[ variable ] = value;
+                        return this._set( variable, value );
 
-                        // If oldValue is not undefined, then property has been modified early.
-                        // And we must save name of modified variable.
-                        if( oldValue !== undefined ) {
-                             if( this._modifiedProperties instanceof Array ) {
-                                 this._modifiedProperties.push( variable );
-                             } else {
-                                 this._modifiedProperties = [ variable ];
-                             }
-                        }
-
-                        this._triggerProperty( variable, value, oldValue );
-
-                        return true;
                     };
 
                 }
 
             }
+
         },
         /*@prototype*/
         {
@@ -172,6 +159,27 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
                 //$( this ).triggerHandler( "objectChange", { property: variable, value: value, oldValue: oldValue } );
 
                 //console.log( "triggered", "propertyChange", { path: variable, value: value, oldValue: oldValue } );
+            },
+
+            _set: function( variable, value ){
+
+                var oldValue = this[ variable ];
+                this[ variable ] = value;
+
+                // If oldValue is not undefined, then property has been modified early.
+                // And we must save name of modified variable.
+                if( oldValue !== undefined ) {
+                    if( this._modifiedProperties instanceof Array ) {
+                        this._modifiedProperties.push( variable );
+                    } else {
+                        this._modifiedProperties = [ variable ];
+                    }
+                }
+
+                this._triggerProperty( variable, value, oldValue );
+
+                return true;
+
             },
 
             /**
