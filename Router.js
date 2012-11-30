@@ -144,35 +144,7 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
 
         buildParamsString: function( params )
         {
-            var paramsString = '';
-
-            for( variable in params ) {
-
-                if ( params[ variable ] instanceof Array ) {
-
-                    var len = params[ variable ].length;
-
-                    while( len-- ) {
-                        paramsString = paramsString + ( paramsString.length ? '&' : '' ) + variable + '[]=' + params[ variable ][ len ];
-                    }
-                }
-                else if ( typeof params[ variable ] == "object" ) {
-
-                    for( var param in params[ variable ] ) {
-
-                        paramsString += ( paramsString.length ? '&' : '' ) + variable + "[" +  param + "]=" + params[ variable ][ param ];
-
-                    }
-
-                }
-                else {
-
-                    paramsString = paramsString + ( paramsString.length ? '&' : '' ) + variable + '=' + params[ variable ];
-                }
-
-            };
-
-            return paramsString;
+            return decodeURIComponent( $.param( params ) );
         }
     },
 
