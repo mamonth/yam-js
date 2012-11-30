@@ -78,6 +78,30 @@ define("app/ModelWatcher", [ /* "app/Model" */ ], function () {
                 return this.has( classDef, identity ) ? this._storage[ classDef.fullName ][ identity ] : undefined;
             },
 
+
+            //Возвращает ModelList
+            getList: function( classDef, identityArr ){
+
+                var coll = new app.ModelList( classDef );
+
+                if ( identityArr instanceof Array && identityArr.length > 0){
+
+
+                    for( var id in identityArr ){
+
+                        var mdl = this.get(classDef, identityArr[ id ]);
+
+                        if ( mdl !== undefined ) {
+                            coll.push( mdl )
+                        }
+
+                    }
+
+                }
+
+                return  coll;
+
+            },
             /**
              * @param {app.AModel} modelInstance
              */

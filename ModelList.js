@@ -44,8 +44,15 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
                         }
                         else if ( modelsArray[ i ] instanceof Object && !(modelsArray[ i ] instanceof app.AModel) ){
 
-                            this.push( new this._classDef( modelsArray[ i ] ) );
+                            if ( this._classDef.create !== undefined ){
 
+                                this.push( this._classDef.create( modelsArray[ i ] ) );
+
+                            } else {
+
+                                this.push( new this._classDef( modelsArray[ i ] ) );
+
+                            }
                         }
                     }
                 }
