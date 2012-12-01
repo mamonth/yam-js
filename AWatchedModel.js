@@ -27,7 +27,32 @@ define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList"
                     }
                 }
 
+            },
+
+            update: function ( data ) {
+
+                //make some paranoia
+                if ( data instanceof Object && data.id !== undefined ){
+
+                    if ( app.ModelWatcher.has( this, data.id ) ){
+
+                        var model = app.ModelWatcher.get( this, data.id );
+
+                        for (var param in data) {
+
+                            var setter = "set" + model.Class._getMethodEnding( param );
+
+                            if (undefined === model[ setter ] || typeof model[setter] !== "function") continue;
+
+                            model[setter]( data[ param ] );
+                        }
+
+                    }
+
+                }
+
             }
+
         },
         /*@prototype*/
         {
