@@ -21,6 +21,7 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
             _classDef: undefined,
             _collection: undefined,
             length: 0,
+            _proxyed: undefined,
 
             /**
              *
@@ -31,6 +32,15 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
 
                 this._classDef = classDef;
                 this._collection = [];
+                this._proxyed = {};
+
+                this._proxyed.ojectChange = this.proxy(function( event, data ){
+                    event.stopPropagation();
+
+                    $( [this, this._collection ]).triggerHandler( "objectChange", $.extend( data, { targetModel: event.target } ) );
+
+                    return false;
+                });
 
                 if( undefined !== modelsArray && modelsArray instanceof Array ){
 
@@ -68,14 +78,7 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
 
                 this._collection.push( model );
 
-//                $( model ).bind( "objectChange", function( event ){
-//
-//                    event.stopPropagation();
-//
-//                    self._trigger( event );
-//
-//                    return false;
-//                });
+                $( [ model ] ).bind( "propertyChange", this._proxyed.ojectChange );
 
                 this.length++;
 
@@ -106,6 +109,8 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
                 this.length = this._collection.length;
 
                 this._trigger( { change: "remove", index: key, items: [ model ] } );
+
+                $( [ model ] ).unbind('objectChange', this._proxyed.ojectChange );
 
                 return model;
             },
@@ -168,6 +173,8 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
                     }
                 }
 
+                $( [ model ] ).unbind('objectChange', this._proxyed.ojectChange );
+
                 return kLen;
             },
             filterBy: function( property, value ){
@@ -221,6 +228,15 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
                 return this._collection;
             },
             clear: function() {
+
+                var self = this;
+
+                _.each( this._collection, function( model ){
+
+                    $( [ model ] ).unbind('objectChange', self._proxyed.ojectChange );
+
+                });
+
                 this._collection.length = 0;
                 this.length = this._collection.length;
 
