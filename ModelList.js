@@ -92,6 +92,10 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
 
             },
 
+	        /**
+	         *
+	         * @return {app.AModel}
+	         */
             pop: function(){
 
                 var key = this._collection.length - 1,
@@ -109,6 +113,7 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
             /**
              *
              * @param id
+             * @return {app.AModel}
              */
             getById: function( id ){
 
@@ -117,9 +122,32 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
                 return keys.length ? this._collection[ keys[0] ] : null;
             },
 
+	        /**
+	         *
+	         * @param key
+	         * @return {app.AModel}
+	         */
             get: function( key ){
                 return this._collection[ key ];
             },
+
+	        /**
+	         * Get model ids array
+	         *
+	         * @return {Array}
+	         */
+	        getIds: function(){
+
+		        var len = this._collection.length;
+		        var arr = [];
+
+		        while (len--){
+			        arr.push(this._collection[ len ][this._classDef.getIdentity()]);
+		        }
+
+		        return arr;
+
+	        },
 
             /**
              *
