@@ -110,7 +110,7 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
 
                 this._trigger( { change: "remove", index: key, items: [ model ] } );
 
-                $( [ model ] ).unbind('objectChange', this._proxyed.ojectChange );
+                $( [ model ] ).unbind('propertyChange', this._proxyed.ojectChange );
 
                 return model;
             },
@@ -173,7 +173,7 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
                     }
                 }
 
-                $( [ model ] ).unbind('objectChange', this._proxyed.ojectChange );
+                $( [ model ] ).unbind('propertyChange', this._proxyed.ojectChange );
 
                 return kLen;
             },
@@ -233,7 +233,7 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
 
                 _.each( this._collection, function( model ){
 
-                    $( [ model ] ).unbind('objectChange', self._proxyed.ojectChange );
+                    $( [ model ] ).unbind('propertyChange', self._proxyed.ojectChange );
 
                 });
 
