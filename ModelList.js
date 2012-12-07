@@ -112,6 +112,13 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
 
             /**
              *
+             */
+            last: function() {
+                return this._collection[ this._collection.length - 1 ];
+            },
+
+            /**
+             *
              * @param id
              * @return {app.AModel}
              */
