@@ -154,7 +154,7 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
             },
             _triggerProperty: function( variable, value, oldValue ){
 
-                $( this ).triggerHandler( "propertyChange", { path: variable, value: value, oldValue: oldValue } );
+                $( [this] ).triggerHandler( "propertyChange", { path: variable, value: value, oldValue: oldValue } );
 
                 //$( this ).triggerHandler( "objectChange", { property: variable, value: value, oldValue: oldValue } );
 
