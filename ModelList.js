@@ -184,6 +184,22 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
 
                 return kLen;
             },
+
+            /**
+             * remove items portion from collections
+             */
+            splice: function( start, deleteCount ){
+
+                deleteCount = deleteCount || this.length;
+
+                var key = start > 0 ? start - 1: this._collection.length - deleteCount,
+                    deleted = this._collection.splice( start, deleteCount );
+
+                this.length = this._collection.length;
+
+                this._trigger( { change: "remove", index: key, items: deleted } );
+            },
+
             filterBy: function( property, value ){
 
                 var keys = this._getKeyBy( property, value ),
