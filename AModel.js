@@ -9,7 +9,7 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
     "use strict";
 
     /**
-     * @class app.Model
+     * @class app.AModel
      */
     app.Observable.extend("app.AModel",
         /* @static */
