@@ -8,10 +8,10 @@ define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList"
     "use strict";
 
     /**
-     * @class app.Model
+     * @class app.AWatchedModel
      */
     app.AModel.extend("app.AWatchedModel",
-        /*@static*/
+        /* @static */
         {
             create: function(data){
 
@@ -54,7 +54,7 @@ define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList"
             }
 
         },
-        /*@prototype*/
+        /* @prototype */
         {
 
             init: function (values) {

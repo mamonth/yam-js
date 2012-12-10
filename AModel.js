@@ -12,7 +12,7 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
      * @class app.AModel
      */
     app.Observable.extend("app.AModel",
-        /*@static*/
+        /* @static */
         {
             /**
              * Setup method, MUST NOT BE OVERWRITTEN !
@@ -111,7 +111,7 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
             }
 
         },
-        /*@prototype*/
+        /* @prototype */
         {
             /**
              * base identity property
