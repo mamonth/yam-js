@@ -11,7 +11,7 @@ define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList"
      * @class app.Model
      */
     app.AModel.extend("app.AWatchedModel",
-        /*@static*/
+        /* @static */
         {
             create: function(data){
 
@@ -54,7 +54,7 @@ define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList"
             }
 
         },
-        /*@prototype*/
+        /* @prototype */
         {
 
             init: function (values) {
