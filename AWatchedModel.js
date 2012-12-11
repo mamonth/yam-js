@@ -8,7 +8,7 @@ define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList"
     "use strict";
 
     /**
-     * @class app.Model
+     * @class app.AWatchedModel
      */
     app.AModel.extend("app.AWatchedModel",
         /* @static */
