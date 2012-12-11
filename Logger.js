@@ -61,7 +61,7 @@ define("app/Logger", function () {
         _echo: function (args, type) {
             var args = app.Logger._parseArgs(args);
 
-            /* @cc_on app.Logger.ie = true; @ */
+            /*@cc_on app.Logger.ie = true; @*/
 
             if (app.Logger.debug && window.console && window.console[type]) {
                 if (app.Logger.ie) {
