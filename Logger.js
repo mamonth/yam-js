@@ -24,7 +24,7 @@ define("app/Logger", function () {
 
         level: 1,
 
-        ie: false,
+        ie: ( $.browser.msie !== undefined ) ? $.browser.msie : false,
 
         init: function() {
 
