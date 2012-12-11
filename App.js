@@ -91,7 +91,8 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
             var history = window.History;
 
             if ( window.location.toString().search(/#/) && !history.isTraditionalAnchor( history.getHash() ) ) {
-                if ( history.getHash().search(/^\//) ) {
+                app.Logger.warn( "IF", history.getHash(), history.getHash().search(/^\//) );
+                if ( history.getHash().search(/^\//) >= 0 ) {
                     window.location = history.getHash();
                 } else {
                     window.location = history.getBasePageUrl() + history.getHash();
