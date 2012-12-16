@@ -90,6 +90,14 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
              */
             unshift: function( model ){
 
+                this._collection.unshift( model );
+
+                $( [ model ] ).bind( "propertyChange", this._proxyed.ojectChange );
+
+                this.length++;
+
+                //refresh
+                this._trigger( { change: "insert", index: 0, items: [ model ] } );
 
             },
 
