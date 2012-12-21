@@ -111,12 +111,27 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
                 return;
             }
         
-            var state = History.getState();
-            if( typeof state.data.ajaxer !="undefined" && !state.data.ajaxer && this.runCnt!=0){ app.Logger.log(this, "Exit: ajaxer disabled",state.data); return; }
+            var state = History.getState(),
+	            time = new Date().getTime(),
+	            className;
+
+
+	        // deprecated !!!! @TODO - remove this peace of shit
+            if( typeof state.data.ajaxer !="undefined" && !state.data.ajaxer && this.runCnt!=0){
+	            app.Logger.log(this, "Exit: ajaxer disabled",state.data);
+	            return;
+            }
+
+            // skip this run in case skip
+	        if( state.data !== undefined && state.data.skipRun === true ){
+		        app.Logger.log( this, "skipping run" );
+		        return;
+	        }
+
             this.runCnt++;
-            var time = new Date().getTime();
-            if(this.runCnt > 1){ this.startTime = time;}
-            app.Logger.tLog(this, "Run ["+(time - this.startTime)+"ms]")
+
+            if( this.runCnt > 1 ){ this.startTime = time; }
+
             this._unready();
 
             var matches = Router.match();
@@ -129,18 +144,21 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
             }
 
             // Check whitch modules must be destroyed
-            for (var className in this._modules) {
-                if (undefined === matches[className]) this._unregisterModule(className);
+            for ( className in this._modules) {
+                if (undefined === matches[ className ] ){
+	                this._unregisterModule( className );
+                }
             }
 
-            for (var className in matches) {
+            for ( className in matches) {
                 this._modulesToReady[className] = className;
             }
 
             // Run matched modules
-            for (var className in matches) {
+            for ( className in matches) {
                 this.timers[className] = new Date().getTime();
-                require([this._getModuleNameByClass(className)], this.proxy("_onLoadModule", className, matches[className]));
+
+                require([this._getModuleNameByClass(className)], this.proxy( "_onLoadModule", className, matches[className] ) );
             }
         },
 
@@ -190,6 +208,7 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
         },
 
         _onLoadModule: function (className, params) {
+
             this._registerModule(className, params );
 
             if (this._modules[className] !== undefined && this._modules[className].run !== undefined) {
