@@ -123,7 +123,7 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
             }
 
             // skip this run in case skip
-	        if( state.data !== undefined && state.data.skipRun === true ){
+	        if( state.data !== undefined && state.data.skipRun === true && this.runCnt > 0 ){
 		        app.Logger.log( this, "skipping run" );
 		        return;
 	        }
