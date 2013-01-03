@@ -86,13 +86,30 @@ define("app/ModelWatcher", [ /* "app/Model" */ ], function () {
 
                 if ( identityArr instanceof Array && identityArr.length > 0){
 
-
                     for( var id in identityArr ){
 
                         var mdl = this.get(classDef, identityArr[ id ]);
 
                         if ( mdl !== undefined ) {
                             coll.push( mdl )
+                        }
+
+                    }
+
+                } else if( identityArr === undefined ){
+
+                    if (this._storage[ classDef.fullName ] instanceof Object){
+
+                        for (var key in this._storage[ classDef.fullName ]){
+
+                            if ( this._storage[ classDef.fullName ].hasOwnProperty( key ) &&
+                                 typeof( this._storage[ classDef.fullName ][ key ] ) !== "function" &&
+                                 this._storage[ classDef.fullName ][ key ] instanceof Object ){
+
+                                coll.push( this._storage[ classDef.fullName ][ key ] );
+
+                            }
+
                         }
 
                     }

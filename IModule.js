@@ -1,6 +1,7 @@
 /**
  * Routed module interface
  *
+ * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @author Max Maximov <max.maximov@gmail.com>
  * @version 0.2.1
  */
