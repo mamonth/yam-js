@@ -9,14 +9,17 @@
 define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/ADeferredModule"], function( Router, Hub, Logger, IModule, ADeferredModule ) {
     "use strict";
 
-    $.Class.extend("app.App", {
+    /**
+     * @class yam.Core
+     */
+    $.Class.extend( 'yam.Core', {
         /* @static */
         _instance: undefined,
 
         _whenReadies: [],
         _readyCallbacks: [],
         getInstance: function (options) {
-            if (!this._instance) this._instance = new app.App(options);
+            if (!this._instance) this._instance = new this.Class(options);
             return this._instance;
         },
 
@@ -247,7 +250,7 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
 
             this._ready = false;
             this._modulesToReady = {};
-            app.App._whenReadies = [];
+            this.Class._whenReadies = [];
 
             if( undefined !== (window).whenReadyKillall )
                 $(window).whenReadyKillall();
@@ -259,9 +262,9 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
 
             this._ready = true;
 
-            while (app.App._whenReadies.length > 0) {
-                $(app.App._whenReadies[0][0]).whenReady(app.App._whenReadies[0][1]);
-                app.App._whenReadies.shift();
+            while ( this.Class._whenReadies.length > 0) {
+                $( this.Class._whenReadies[0][0]).whenReady( this.Class._whenReadies[0][1]);
+                this.Class._whenReadies.shift();
             }
 
             while( this.Class._readyCallbacks.length > 0 ){
@@ -312,6 +315,10 @@ define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/AD
         }
     });
 
-    return app.App;
+    // backward compatibility
+    if( app === undefined ) app = {};
+    app.App = yam.Core;
+
+    return yam.Core;
 });
 
