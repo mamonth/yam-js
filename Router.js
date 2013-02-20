@@ -26,11 +26,23 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
     {
         _rules: [],
 
+        /**
+         * Add rule
+         *
+         * @param rule
+         * @param name
+         */
         add: function( rule, name )
         {
             this._rules.push( new this( rule, name ) )
         },
 
+        /**
+         * Match path with rules, return matched
+         *
+         * @param path
+         * @returns {object}
+         */
         match: function( path )
         {
             if( !path ) {
@@ -54,9 +66,16 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             return result;
         },
 
-        getCurrentPath: function()
-        {
-            var path = window.History.getState().url.replace( /^https?:\/\/[^\/]+\//, '' );
+        /**
+         * Get current state path
+         *
+         * @todo - cutoff History dependancy, rename to getCurrentState
+         *
+         * @returns {string}
+         */
+        getCurrentPath: function() {
+
+            var path = window.History.getState().url.replace( /^(https?|file):\/\/[^\/]+\//, '' );
 
             path = path.replace( /\?([^#\?]+)?/g, '' );
 
@@ -68,8 +87,13 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             return path;
         },
 
-        getParams: function()
-        {
+        /**
+         * Retrieve and parse GET parameters string
+         *
+         * @returns {object}
+         */
+        getParams: function() {
+
             var params = {}, hash;
 
             var hashes = this.getParamsString().split('&');
@@ -113,11 +137,11 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
 
         getParamsString: function()
         {
-            var paramsPos = window.History.getState().url.indexOf('?');
+            var url = window.History.getState().url, paramsPos = url.indexOf('?');
 
-            if( paramsPos > 0 && paramsPos + 1 < window.History.getState().url.length )
+            if( paramsPos > 0 && paramsPos + 1 < url.length )
             {
-                return window.History.getState().url.slice( paramsPos + 1 );
+                return url.slice( paramsPos + 1 );
             }
 
             return '';
@@ -142,6 +166,12 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             return chunk;
         },
 
+        /**
+         * Construct GET parameters string from object.
+         *
+         * @param params
+         * @returns {string}
+         */
         buildParamsString: function( params )
         {
             return decodeURIComponent( $.param( params ) );
@@ -150,9 +180,22 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
 
     /* @prototype */
     {
+        /**
+         * Route name
+         */
         name: null,
+
+        /**
+         * Route rule ( can be string or regexp )
+         */
         rule: null,
 
+        /**
+         * Constructor
+         *
+         * @param rule
+         * @param name
+         */
         init: function( rule, name )
         {
             this.name = name;
@@ -160,6 +203,12 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             this.rule = rule;
         },
 
+        /**
+         * Match self rule with path.
+         *
+         * @param path
+         * @returns {boolean}
+         */
         match: function( path )
         {
             var params = false, matches, key;
@@ -170,7 +219,7 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
 
                 if( matches )
                 {
-                    params = []
+                    params = [];
 
                     for( key = 1; key <= matches.length; key++ )
                     {

@@ -10,21 +10,16 @@ define("app/Logger", function () {
     $.Class.extend("app.Logger",
     /* @static */
     {
-        NONE: 0,
-
-        ERROR: 1,
-
-        WARN: 2,
-
-        INFO: 3,
-
-        DEBUG: 4,
-
-        LOG: 5,
+        NONE    : 0,
+        ERROR   : 1,
+        WARN    : 2,
+        INFO    : 3,
+        DEBUG   : 4,
+        LOG     : 5,
 
         level: 1,
 
-        ie: ( $.browser.msie !== undefined ) ? $.browser.msie : false,
+        ie: ( $.support.msie !== undefined ) ? $.support.msie : false,
 
         init: function() {
 
