@@ -143,7 +143,7 @@ define( function() {
 
 
     // backward compatibility
-    if( app === undefined ) app = {};
+    if( app === undefined ) var app = {};
     app.State = yam.State;
 
     return yam.State;
