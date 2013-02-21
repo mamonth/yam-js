@@ -18,7 +18,7 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.2.1
  */
-define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
+define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
     //"use strict";
 
     $.Class.extend("app.Route",
@@ -46,7 +46,7 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
         match: function( path )
         {
             if( !path ) {
-                path = this.getCurrentPath();
+                path = State.current().location;
             }
 
             var result = {}, rulesCount = this._rules.length;
@@ -69,28 +69,19 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
         /**
          * Get current state path
          *
-         * @todo - cutoff History dependancy, rename to getCurrentState
+         * @deprecated since 0.3.2, now yam.State.current().location must be used
          *
-         * @returns {string}
+         * @returns {String}
          */
         getCurrentPath: function() {
 
-            var path = window.History.getState().url.replace( /^(https?|file):\/\/[^\/]+\//, '' );
-
-            path = path.replace( /\?([^#\?]+)?/g, '' );
-
-            path = path.replace( /(#|#!).*/, "/" );
-
-            // Remove slash duplicates
-            path = path.replace( /\/+/, '/' );
-
-            return path;
+            return State.current().location;
         },
 
         /**
          * Retrieve and parse GET parameters string
          *
-         * @returns {object}
+         * @returns {Object}
          */
         getParams: function() {
 
@@ -147,8 +138,15 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             return '';
         },
 
-        extractChunkURI: function(index) {
-            var uri   = this.getCurrentPath(),
+        /**
+         * @deprecated since 0.3.2, when History and browser related methods was removed
+         *
+         * @param index
+         * @returns {String}
+         */
+        extractChunkURI: function( index ) {
+
+            var uri   = State.current().location,
                 chunk = undefined;
 
             if(!isNaN(index)) {
