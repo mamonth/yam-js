@@ -66,9 +66,9 @@ define( function() {
 
                 var state = new this( location, data, title );
 
-                this._stack.push( state );
+                if( this._stack.length ){ this._currentKey++; }
 
-                if( this._currentKey > 0 ){ this._currentKey++; }
+                this._stack.push( state );
 
                 $(this)
                     .trigger( 'locationChange', state )
