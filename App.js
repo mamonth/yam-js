@@ -136,6 +136,8 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
 
                     Logger.log(this, "Request unresolved (" + State.current().location + ")");
 
+                    this._setReady();
+
                 } else {
 
                     // Run matched modules
