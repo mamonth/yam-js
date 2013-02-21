@@ -20,7 +20,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
             _readyCallbacks: [],
 
             getInstance: function (options) {
-                if (!this._instance) this._instance = new this.Class(options);
+                if (!this._instance) this._instance = new this(options);
                 return this._instance;
             },
 
