@@ -14,6 +14,8 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
     app.Observable.extend("app.AModel",
         /* @static */
         {
+            properties: [],
+
             /**
              * Setup method, MUST NOT BE OVERWRITTEN !
              *
@@ -108,6 +110,9 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
 
                 }
 
+                // store to properties array
+                this.properties.push( variable );
+
             }
 
         },
@@ -152,6 +157,15 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
             getIdentityValue: function(){
                 return this[ this.Class.getIdentity() ] !== undefined ? this[ this.Class.getIdentity() ] : undefined;
             },
+
+            /**
+             * Observable realisation
+             *
+             * @param variable
+             * @param value
+             * @param oldValue
+             * @private
+             */
             _triggerProperty: function( variable, value, oldValue ){
 
                 $( [this] ).triggerHandler( "propertyChange", { path: variable, value: value, oldValue: oldValue } );
@@ -161,6 +175,14 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
                 //console.log( "triggered", "propertyChange", { path: variable, value: value, oldValue: oldValue } );
             },
 
+            /**
+             * Base setter
+             *
+             * @param variable
+             * @param value
+             * @returns {boolean}
+             * @private
+             */
             _set: function( variable, value ){
 
                 var oldValue = this[ variable ];
@@ -189,7 +211,23 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
              */
             getModifiedProperties: function() {
                 return ( this._modifiedProperties instanceof Array ) ? this._modifiedProperties : [] ;
+            },
+
+            propertiesData: function(){
+
+                var data = {},
+                    propertyName;
+
+                for( var len = this.Class.properties.length; len >= 0; --len ){
+
+                    propertyName = this.Class.properties[ len ];
+
+                    data[ propertyName ] = this[ propertyName ];
+                }
+
+                return data;
             }
+
         }
     );
 });
