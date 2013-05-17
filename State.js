@@ -68,6 +68,8 @@ define( function() {
 
                 if( this._stack.length ){ this._currentKey++; }
 
+                this._stack.splice( this._currentKey );
+
                 this._stack.push( state );
 
                 $(this)
@@ -99,11 +101,21 @@ define( function() {
              * @param steps
              */
             back: function( steps ){
-                if( steps === undefined ) steps = 1;
 
+                steps = new Number( steps );
 
-                $([this]).trigger( 'change', state );
-                $([this]).trigger( 'back', state );
+                if( isNaN( steps ) || steps < 1 ) steps = 1;
+
+                steps = Math.min( steps, this._currentKey );
+
+                if( this._currentKey ){
+
+                    this._currentKey = this._currentKey - steps;
+
+                    $(this).trigger( 'locationChange', this.current() );
+                    // $(this).trigger( 'back', this.current() );
+
+                }
             },
 
             /**
@@ -115,8 +127,8 @@ define( function() {
                 if( steps === undefined ) steps = 1;
 
 
-                $([this]).trigger( 'change', state );
-                $([this]).trigger( 'forward', state );
+                $(this).trigger( 'locationChange', state );
+                $(this).trigger( 'forward', state );
             }
         },
         /* @prototype */
