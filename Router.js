@@ -18,7 +18,7 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.2.1
  */
-define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
+define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
     //"use strict";
 
     $.Class.extend("app.Route",
@@ -26,15 +26,27 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
     {
         _rules: [],
 
+        /**
+         * Add rule
+         *
+         * @param rule
+         * @param name
+         */
         add: function( rule, name )
         {
             this._rules.push( new this( rule, name ) )
         },
 
+        /**
+         * Match path with rules, return matched
+         *
+         * @param path
+         * @returns {object}
+         */
         match: function( path )
         {
             if( !path ) {
-                path = this.getCurrentPath();
+                path = State.current().location;
             }
 
             var result = {}, rulesCount = this._rules.length;
@@ -54,22 +66,25 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             return result;
         },
 
-        getCurrentPath: function()
-        {
-            var path = window.History.getState().url.replace( /^https?:\/\/[^\/]+\//, '' );
+        /**
+         * Get current state path
+         *
+         * @deprecated since 0.3.2, now yam.State.current().location must be used
+         *
+         * @returns {String}
+         */
+        getCurrentPath: function() {
 
-            path = path.replace( /\?([^#\?]+)?/g, '' );
-
-            path = path.replace( /(#|#!).*/, "/" );
-
-            // Remove slash duplicates
-            path = path.replace( /\/+/, '/' );
-
-            return path;
+            return State.current().location;
         },
 
-        getParams: function()
-        {
+        /**
+         * Retrieve and parse GET parameters string
+         *
+         * @returns {Object}
+         */
+        getParams: function() {
+
             var params = {}, hash;
 
             var hashes = this.getParamsString().split('&');
@@ -113,18 +128,25 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
 
         getParamsString: function()
         {
-            var paramsPos = window.History.getState().url.indexOf('?');
+            var url = window.History.getState().url, paramsPos = url.indexOf('?');
 
-            if( paramsPos > 0 && paramsPos + 1 < window.History.getState().url.length )
+            if( paramsPos > 0 && paramsPos + 1 < url.length )
             {
-                return window.History.getState().url.slice( paramsPos + 1 );
+                return url.slice( paramsPos + 1 );
             }
 
             return '';
         },
 
-        extractChunkURI: function(index) {
-            var uri   = this.getCurrentPath(),
+        /**
+         * @deprecated since 0.3.2, when History and browser related methods was removed
+         *
+         * @param index
+         * @returns {String}
+         */
+        extractChunkURI: function( index ) {
+
+            var uri   = State.current().location,
                 chunk = undefined;
 
             if(!isNaN(index)) {
@@ -142,6 +164,12 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             return chunk;
         },
 
+        /**
+         * Construct GET parameters string from object.
+         *
+         * @param params
+         * @returns {string}
+         */
         buildParamsString: function( params )
         {
             return decodeURIComponent( $.param( params ) );
@@ -150,9 +178,22 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
 
     /* @prototype */
     {
+        /**
+         * Route name
+         */
         name: null,
+
+        /**
+         * Route rule ( can be string or regexp )
+         */
         rule: null,
 
+        /**
+         * Constructor
+         *
+         * @param rule
+         * @param name
+         */
         init: function( rule, name )
         {
             this.name = name;
@@ -160,6 +201,12 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
             this.rule = rule;
         },
 
+        /**
+         * Match self rule with path.
+         *
+         * @param path
+         * @returns {boolean}
+         */
         match: function( path )
         {
             var params = false, matches, key;
@@ -170,7 +217,7 @@ define("app/Router", ["app/Hub", "app/Logger"], function(Hub, Logger) {
 
                 if( matches )
                 {
-                    params = []
+                    params = [];
 
                     for( key = 1; key <= matches.length; key++ )
                     {

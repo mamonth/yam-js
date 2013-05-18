@@ -4,295 +4,305 @@
  * Contains various helper methods, store and handle "Controller" modules.
  *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
- * @version 0.2.1
+ * @version 0.3.2
  */
-define("app/App", ["app/Router", "app/Hub", "app/Logger", "app/IModule", "app/ADeferredModule"], function( Router, Hub, Logger, IModule, ADeferredModule ) {
+define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], function( Router, State, Logger, IModule, ADeferredModule ) {
     "use strict";
 
-    $.Class.extend("app.App", {
+    /**
+     * @class yam.Core
+     */
+    $.Class.extend( 'yam.Core',
         /* @static */
-        _instance: undefined,
+        {
+            _instance: undefined,
 
-        _whenReadies: [],
-        _readyCallbacks: [],
-        getInstance: function (options) {
-            if (!this._instance) this._instance = new app.App(options);
-            return this._instance;
-        },
+            _readyCallbacks: [],
 
-        when: function (selector, callback) {
+            getInstance: function (options) {
+                if (!this._instance) this._instance = new this(options);
+                return this._instance;
+            },
 
-            if ( this.getInstance()._ready) {
-                $(selector).whenReady(callback);
-            } else {
-                this._whenReadies.push([selector, callback]);
-            }
-        },
-        ready: function( selector, callback ) {
+            ready: function( selector, callback ) {
 
-            if( typeof selector === "function" ){
-                callback = selector;
-                selector = undefined;
-            }
-
-            var def = $.Deferred(), defCallback = function(){
-
-                def.resolve( this );
-
-                if( typeof callback === "function" ) {
-                    callback( this );
+                if( typeof selector === "function" ){
+                    callback = selector;
+                    selector = undefined;
                 }
-            };
 
-            if ( this.getInstance()._ready ) {
-                $(selector).whenReady( defCallback );
-            } else {
-                this._readyCallbacks.push( { selector: selector, callback: defCallback } );
+                var def = $.Deferred(), defCallback = function(){
+
+                    def.resolve( this );
+
+                    if( typeof callback === 'function' ) {
+                        callback( this );
+                    }
+                };
+
+                if ( this.getInstance()._ready ) {
+                    $(selector).whenReady( defCallback );
+                } else {
+                    this._readyCallbacks.push( { selector: selector, callback: defCallback } );
+                }
+
+                return def.promise();
             }
-
-            return def.promise();
-        }
-    }, {
+        },
         /* @prototype */
-        options: {
-            routes: {},
-            baseNamespace: "App"
-        },
+        {
+            options: {
+                routes: {},
+                baseNamespace: "App"
+            },
 
-        /**
-         * current Controller modules
-         *
-         */
-        _modules: {},
+            /**
+             * current Controller modules
+             *
+             */
+            _modules: {},
 
-        _modulesToReady: {},
+            _modulesToReady: {},
 
-        _ready: false,
-        _reRun: false,
-        runCnt:0,
-        timers:{},
-        init: function (options) {
-            this.startTime = new Date().getTime();
-            if( this.Class._instance ) throw new Error("Another instance already created. Use getInstance()");
+            _ready: false,
+            _reRun: false,
+            runCnt:0,
+            timers:{},
 
-            this.Class._instance = this;
+            /**
+             * Constructor
+             *
+             * @param options Application config
+             */
+            init: function ( options ) {
 
-            $.extend(this.options, options || {});
+                this.startTime = new Date().getTime();
 
-            app.Logger.log(this,"Init");
+                if( this.Class._instance ) throw new Error("Another instance already created. Use getInstance()");
 
-            // Binding route rules to modules
-            $.each(this.options.routes, function (moduleName, routes) {
-                $.each(routes, function (i, routeRule) {
-                    Router.add(routeRule, moduleName);
+                this.Class._instance = this;
+
+                $.extend(this.options, options || {});
+
+                Logger.log(this,"Init");
+
+                // Binding route rules to modules
+                $.each(this.options.routes, function (moduleName, routes) {
+                    $.each(routes, function (i, routeRule) {
+                        Router.add(routeRule, moduleName);
+                    });
                 });
-            });
 
-            var history = window.History;
+                // Bind to state change
+                $( State ).bind( 'locationChange', this.proxy('run') );
+            },
 
-            if ( window.location.toString().search(/#/) && !history.isTraditionalAnchor( history.getHash() ) ) {
-                app.Logger.warn( "IF", history.getHash(), history.getHash().search(/^\//) );
-                if ( history.getHash().search(/^\//) >= 0 ) {
-                    window.location = history.getHash();
-                } else {
-                    window.location = history.getBasePageUrl() + history.getHash();
+            run: function () {
+
+                if( this._ready === false && this.runCnt > 0 ){
+                    this._reRun = true;
+
+                    return;
                 }
-            } else {
-                // App run on every hash change
-                $(window).bind("statechange.app", this.proxy("run"));
-            }
-        },
 
-        run: function () {
-        
-            if( this._ready === false && this.runCnt > 0 ){
-                this._reRun = true;
-                
-                return;
-            }
-        
-            var state = History.getState();
-            if( typeof state.data.ajaxer !="undefined" && !state.data.ajaxer && this.runCnt!=0){ app.Logger.log(this, "Exit: ajaxer disabled",state.data); return; }
-            this.runCnt++;
-            var time = new Date().getTime();
-            if(this.runCnt > 1){ this.startTime = time;}
-            app.Logger.tLog(this, "Run ["+(time - this.startTime)+"ms]")
-            this._unready();
+                var stateData = State.current().data,
+                    time = new Date().getTime(),
+                    className;
 
-            var matches = Router.match();
-
-            // 404 behavior
-            if($.isEmptyObject(matches)) {
-                Logger.log(this, "Request unresolved (" + Router.getCurrentPath() + ")");
-
-                this.cleanup();
-            }
-
-            // Check whitch modules must be destroyed
-            for (var className in this._modules) {
-                if (undefined === matches[className]) this._unregisterModule(className);
-            }
-
-            for (var className in matches) {
-                this._modulesToReady[className] = className;
-            }
-
-            // Run matched modules
-            for (var className in matches) {
-                this.timers[className] = new Date().getTime();
-                require([this._getModuleNameByClass(className)], this.proxy("_onLoadModule", className, matches[className]));
-            }
-        },
-
-        cleanup: function() {
-            Logger.log(this, "Cleanup");
-
-            for ( var moduleName in this._modules) {
-                this._unregisterModule( moduleName );
-            }
-
-            this._modules = {};
-
-            this._unready();
-        },
-
-        _registerModule: function(className, params) {
-            if (undefined === this._modules[className]) {
-                var classInstance = $.String.getObject(className , window, true);
-
-                if(classInstance && typeof classInstance == "function") {
-                    var module = new classInstance( params );
-
-                    Logger.log(module, "init");
-
-                    this._modules[className] = module;
-
-                    Logger.log(this, className + " module registered");
-                } else if (this.debug) {
-                    Logger.error('[App] Can not create instance of class "' + className + '" requested by path "' + this._getModuleNameByClass(className) + '"');
+                // skip this run in case skip
+                if( stateData !== undefined && stateData.skipRun === true && this.runCnt > 0 ){
+                    Logger.log( this, "skipping run" );
+                    return;
                 }
-            }
 
-            return this._modules[className] ? true : false;
-        },
 
-        _unregisterModule: function (className) {
-            if (undefined === this._modules[className]) return false;
+                this.runCnt++;
 
-            if (this._modules[className].destruct !== undefined) {
-                Logger.log(this._modules[className], "destruct");
+                if( this.runCnt > 1 ){ this.startTime = time; }
 
-                this._modules[className].destruct();
-            }
+                this._unready();
 
-            // crunch
-            delete(this._modules[className]);
-        },
+                var matches = Router.match();
 
-        _onLoadModule: function (className, params) {
-            this._registerModule(className, params );
+                // Check which modules must be destroyed
+                for ( className in this._modules) {
+                    if (undefined === matches[ className ] ){
+                        this._unregisterModule( className );
+                    }
+                }
 
-            if (this._modules[className] !== undefined && this._modules[className].run !== undefined) {
-                
-                if ( this._modules[className] instanceof ADeferredModule) {
+                // 404 behavior
+                if( $.isEmptyObject(matches) ) {
 
-                    this._modules[className].onReady( this.proxy("_onReadyModule", className ) );
+                    Logger.log(this, "Request unresolved (" + State.current().location + ")");
 
-                    this._modules[className].run(params);
+                    this._setReady();
 
                 } else {
-                    this._modules[className].run(params);
 
-                    this._onReadyModule(className);
+                    // Run matched modules
+                    for ( className in matches) {
+
+                        this._modulesToReady[className] = className;
+
+                        this.timers[className] = new Date().getTime();
+
+                        require([this._getModuleNameByClass(className)], this.proxy( "_onLoadModule", className, matches[className] ) );
+                    }
                 }
-            }
-        },
+            },
 
-        _onReadyModule: function (className) {
+            _registerModule: function(className, params) {
+                if (undefined === this._modules[className]) {
+                    var classInstance = $.String.getObject(className , window, true);
+
+                    if(classInstance && typeof classInstance == "function") {
+                        var module = new classInstance( params );
+
+                        Logger.log(module, "init");
+
+                        this._modules[className] = module;
+
+                        Logger.log(this, className + " module registered");
+                    } else if (this.debug) {
+                        Logger.error('[App] Can not create instance of class "' + className + '" requested by path "' + this._getModuleNameByClass(className) + '"');
+                    }
+                }
+
+                return this._modules[className] ? true : false;
+            },
+
+            _unregisterModule: function (className) {
+                if (undefined === this._modules[className]) return false;
+
+                if (this._modules[className].destruct !== undefined) {
+                    Logger.log(this._modules[className], "destruct");
+
+                    this._modules[className].destruct();
+                }
+
+                // crunch
+                delete(this._modules[className]);
+            },
+
+            _onLoadModule: function (className, params) {
+
+                this._registerModule(className, params );
+
+                if (this._modules[className] !== undefined && this._modules[className].run !== undefined) {
+
+                    if ( this._modules[className] instanceof ADeferredModule) {
+
+                        this._modules[className].onReady( this.proxy('_onReadyModule', className ) );
+
+                        this._modules[className].run(params);
+
+                    } else {
+                        this._modules[className].run(params);
+
+                        this._onReadyModule(className);
+                    }
+                }
+            },
+
+            _onReadyModule: function (className) {
+                    var time = new Date().getTime();
+                Logger.tLog(this._modules[className], className, "ready ["+(time - this.timers[className])+"ms]["+(time - this.startTime)+"ms]");
+                delete(this._modulesToReady[className]);
+
+                var size = 0, key;
+                for (key in this._modulesToReady) {
+                    if (this._modulesToReady.hasOwnProperty(key)) size++;
+                }
+
+                if (size == 0) {
+                    this._setReady();
+                }
+            },
+
+            /**
+             * Drops Core 'ready' state
+             *
+             * @private
+             */
+            _unready: function () {
+                app.Logger.log(this, "Drop ready state");
+
+                this._ready = false;
+                this._modulesToReady = {};
+
+                if( undefined !== (window).whenReadyKillall )
+                    $(window).whenReadyKillall();
+            },
+
+            /**
+             * Set Core 'ready' state
+             * @private
+             */
+            _setReady: function () {
                 var time = new Date().getTime();
-            Logger.tLog(this._modules[className], className, "ready ["+(time - this.timers[className])+"ms]["+(time - this.startTime)+"ms]");
-            delete(this._modulesToReady[className]);
+                Logger.tLog(this, "Ready ["+(time - this.startTime)+"ms]");
 
-            var size = 0, key;
-            for (key in this._modulesToReady) {
-                if (this._modulesToReady.hasOwnProperty(key)) size++;
-            }
+                this._ready = true;
 
-            if (size == 0) {
-                this._setReady();
-            }
-        },
+                // event fire
+                $([ this ]).trigger('ready');
 
-        _unready: function () {
-            app.Logger.log(this, "Drop ready state");
+                // DOM ready
+                // @TODO - move this from framework core
+                while( this.Class._readyCallbacks.length > 0 ){
 
-            this._ready = false;
-            this._modulesToReady = {};
-            app.App._whenReadies = [];
+                    var item = this.Class._readyCallbacks.shift();
 
-            if( undefined !== (window).whenReadyKillall )
-                $(window).whenReadyKillall();
-        },
+                    if( undefined === item.callback || typeof item.callback !== "function" ) continue;
 
-        _setReady: function () {
-            var time = new Date().getTime();
-            Logger.tLog(this, "Ready ["+(time - this.startTime)+"ms]");
-
-            this._ready = true;
-
-            while (app.App._whenReadies.length > 0) {
-                $(app.App._whenReadies[0][0]).whenReady(app.App._whenReadies[0][1]);
-                app.App._whenReadies.shift();
-            }
-
-            while( this.Class._readyCallbacks.length > 0 ){
-
-                var item = this.Class._readyCallbacks.shift();
-
-                if( undefined === item.callback || typeof item.callback !== "function" ) continue;
-
-                if( undefined === item.selector ) {
-                    item.callback();
-                } else {
-                    $( item.selector ).whenReady( item.callback );
+                    if( undefined === item.selector ) {
+                        item.callback();
+                    } else {
+                        $( item.selector ).whenReady( item.callback );
+                    }
                 }
+
+                if( this._reRun !== false ){
+                    this._reRun = false;
+                    this.run();
+                }
+            },
+
+            _getClassNameByModule: function (moduleName) {
+                var nameChunks = moduleName.split("/"), nameChunkCount = nameChunks.length;
+
+                if (this.options.baseNamespace) {
+                    nameChunkCount = nameChunks.unshift(this.options.baseNamespace);
+                }
+
+                while (nameChunkCount--) {
+                    nameChunks[nameChunkCount] = nameChunks[nameChunkCount].charAt(0).toUpperCase() + nameChunks[nameChunkCount].slice(1);
+                }
+
+                return nameChunks.join(".");
+            },
+
+            _getModuleNameByClass: function (className) {
+                if (this.options.baseNamespace) {
+                    className = className.replace( this.options.baseNamespace + ".", "" );
+                }
+
+                var nameChunks = className.split( "." ), nameChunkCount = nameChunks.length;
+
+                //while (nameChunkCount--) {
+                    //nameChunks[ nameChunkCount ] = nameChunks[ nameChunkCount ].charAt(0).toLowerCase() + nameChunks[ nameChunkCount ].slice(1);
+                //}
+
+                return nameChunks.join("/");
             }
-            
-            if( this._reRun !== false ){
-                this._reRun = false;
-                this.run();
-            }
-        },
-
-        _getClassNameByModule: function (moduleName) {
-            var nameChunks = moduleName.split("/"), nameChunkCount = nameChunks.length;
-
-            if (this.options.baseNamespace) {
-                nameChunkCount = nameChunks.unshift(this.options.baseNamespace);
-            }
-
-            while (nameChunkCount--) {
-                nameChunks[nameChunkCount] = nameChunks[nameChunkCount].charAt(0).toUpperCase() + nameChunks[nameChunkCount].slice(1);
-            }
-
-            return nameChunks.join(".");
-        },
-
-        _getModuleNameByClass: function (className) {
-            if (this.options.baseNamespace) {
-                className = className.replace( this.options.baseNamespace + ".", "" );
-            }
-
-            var nameChunks = className.split( "." ), nameChunkCount = nameChunks.length;
-
-            //while (nameChunkCount--) {
-                //nameChunks[ nameChunkCount ] = nameChunks[ nameChunkCount ].charAt(0).toLowerCase() + nameChunks[ nameChunkCount ].slice(1);
-            //}
-
-            return nameChunks.join("/");
         }
-    });
+    );
 
-    return app.App;
+    // backward compatibility
+    if( app === undefined ) app = {};
+    app.App = yam.Core;
+
+    return yam.Core;
 });
 

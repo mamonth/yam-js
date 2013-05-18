@@ -74,8 +74,6 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
              */
             push: function( model ){
 
-                var self = this;
-
                 this._collection.push( model );
 
                 $( [ model ] ).bind( "propertyChange", this._proxyed.ojectChange );
@@ -92,6 +90,14 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
              */
             unshift: function( model ){
 
+                this._collection.unshift( model );
+
+                $( [ model ] ).bind( "propertyChange", this._proxyed.ojectChange );
+
+                this.length++;
+
+                //refresh
+                this._trigger( { change: "insert", index: 0, items: [ model ] } );
 
             },
 
@@ -252,13 +258,9 @@ define("app/ModelList", ["app/Observable","app/ModelList"], function () {
             },
             clear: function() {
 
-                var self = this;
-
-                _.each( this._collection, function( model ){
-
-                    $( [ model ] ).unbind('propertyChange', self._proxyed.ojectChange );
-
-                });
+                if ( this._collection.length > 0 ) {
+                        $( this._collection ).unbind('propertyChange', this._proxyed.ojectChange );
+                }
 
                 this._collection.length = 0;
                 this.length = this._collection.length;
