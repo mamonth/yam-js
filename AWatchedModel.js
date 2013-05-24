@@ -51,6 +51,17 @@ define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList"
 
                 }
 
+            },
+            factory: function( data ) {
+
+                var model = app.ModelWatcher.has( this, data.id ) ? app.ModelWatcher.get( this, data.id ) : new this();
+
+                if ( ( data instanceof Object ) )
+                {
+                    model.fill( data );
+                }
+
+                return model;
             }
 
         },
