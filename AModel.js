@@ -113,6 +113,17 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
                 // store to properties array
                 this.properties.push( variable );
 
+            },
+            factory: function( data ) {
+
+                var model = new this();
+
+                if ( ( data instanceof Object ) )
+                {
+                    model.fill( data );
+                }
+
+                return model;
             }
 
         },
@@ -131,12 +142,22 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
             /**
              * Class constructor
              *
-             * Param values must be object with param : value pairs
-             * By default - values will be assigned to new object properties through setters
+             * @see fill method
              *
              * @param values
              */
-            init: function (values) {
+            init: function ( values ) {
+
+                this.fill( values );
+
+            },
+
+            /**
+             * Param values must be object with param : value pairs
+             * By default - values will be assigned to new object properties through setters
+             * @param values
+             */
+            fill: function( values ) {
 
                 for (var param in values) {
 
@@ -146,7 +167,6 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
 
                     this[setter]( values[ param ] );
                 }
-
             },
 
             /**
