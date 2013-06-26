@@ -64,7 +64,7 @@ define( function() {
              */
             push: function( location, data, title ){
 
-                var state = new this( location, data, title );
+                var state = ( location instanceof this ) ? location : new this( location, data, title );
 
                 if( this._stack.length ){ this._currentKey++; }
 
@@ -86,7 +86,7 @@ define( function() {
              */
             replace: function( location, data, title ){
 
-                var state = new this( location, data, title );
+                var state = ( location instanceof this ) ? location : new this( location, data, title );
 
                 this._stack[ this._currentKey ] = state;
 
