@@ -53,7 +53,7 @@ define("app/I18n", ["app/Logger"], function() {
 	 */
 	app.I18n.formByNum = function( number, groupAlias, text ){
 
-		text = app.I18n.get( groupAlias, text, true );
+		text = app.I18n._get( groupAlias, text, true );
 
 		var keys        = [2, 0, 1, 1, 1, 2],
 			mod         = number % 100,
@@ -64,12 +64,12 @@ define("app/I18n", ["app/Logger"], function() {
 
 	app.I18n.getForm = function( groupAlias, text, key ){
 
-		text = app.I18n.get( groupAlias, text, true );
+		text = app.I18n._get( groupAlias, text, true );
 
 		return text[ Math.min( key, text.length ) ];
 	};
 
-	app.I18n.get = function( groupAlias, text, asArray ){
+	app.I18n._get = function( groupAlias, text, asArray ){
 
 		asArray = asArray || false;
 
@@ -91,6 +91,79 @@ define("app/I18n", ["app/Logger"], function() {
 		}
 
 		return textNew;
-	}
+	};
+
+    /**
+     *
+     */
+    app.I18n.get = function( groupAlias, variable ){
+
+        var string  = variable + '';
+
+        if( app.I18n.storage[ groupAlias ] !== undefined && app.I18n.storage[ groupAlias ][ variable ] !== undefined ){
+
+            string = app.I18n.storage[ groupAlias ][ variable ];
+        }
+
+        // process format
+        if( string ){
+
+            var args = [].splice.call( arguments, 0).splice( 2 );
+
+            args.unshift( string );
+
+            string = app.I18n.format.apply( app.I18n, args );
+        }
+
+        return string;
+
+    };
+
+    /**
+     * internal sprintf analog
+     *
+     *
+     */
+    app.I18n.format = function( string ){
+
+        var args = [].splice.call(arguments,0).splice(1);
+
+        // first step - replace simple forms
+        string = string.replace(/{%(\d+)}/g, function(match, number) {
+            number--;
+
+            return typeof args[number] != 'undefined'
+                ? args[number]
+                : match
+                ;
+        });
+
+        // second step- find available tags and process them
+        string = string.replace( /\[(\w+)(:([^\]]+))?\]/g, function( match, tagName, s, tagArgs ){
+
+            var tagArgs = tagArgs ? tagArgs.split('|') : [],
+                tagFunc = '_' + tagName + 'Tag',
+                replaced  = false;
+
+            if( typeof app.I18n[tagFunc] == 'function' ){
+                replaced = app.I18n[tagFunc]( args[0], tagArgs );
+            } else {
+                throw new Error('Unsupported tag"' + tagName + '"');
+            }
+
+            return replaced ? replaced : '';
+        });
+
+        return string;
+    };
+
+    app.I18n._countTag = function( number, args ){
+
+        var keys        = [2, 0, 1, 1, 1, 2],
+            mod         = number % 100,
+            suffix_key  = Math.min( mod > 4 && mod < 20 ? 2 : keys[ Math.min( mod % 10, 5 ) ], args.length - 1 );
+
+        return args[ suffix_key ];
+    };
 
 });
