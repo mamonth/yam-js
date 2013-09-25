@@ -53,7 +53,7 @@ define("app/I18n", ["app/Logger"], function() {
 	 */
 	app.I18n.formByNum = function( number, groupAlias, text ){
 
-		text = app.I18n.get( groupAlias, text, true );
+		text = app.I18n._get( groupAlias, text, true );
 
 		var keys        = [2, 0, 1, 1, 1, 2],
 			mod         = number % 100,
@@ -64,12 +64,12 @@ define("app/I18n", ["app/Logger"], function() {
 
 	app.I18n.getForm = function( groupAlias, text, key ){
 
-		text = app.I18n.get( groupAlias, text, true );
+		text = app.I18n._get( groupAlias, text, true );
 
 		return text[ Math.min( key, text.length ) ];
 	};
 
-	app.I18n.get = function( groupAlias, text, asArray ){
+	app.I18n._get = function( groupAlias, text, asArray ){
 
 		asArray = asArray || false;
 
@@ -128,7 +128,6 @@ define("app/I18n", ["app/Logger"], function() {
 
         var args    = Array.prototype.slice.call(arguments).splice( 1 ),
             string  = typeof string.substring != 'undefined' ? string : '';
-
 
         // first step - replace simple forms
         string = string.replace(/{%(\d+)}/g, function(match, number) {
