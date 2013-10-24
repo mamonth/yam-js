@@ -112,8 +112,9 @@ define( function() {
 
                     this._currentKey = this._currentKey - steps;
 
-                    $(this).trigger( 'locationChange', this.current() );
-                    // $(this).trigger( 'back', this.current() );
+                    $(this)
+                        .trigger( 'locationChange', this.current() )
+                        .trigger( 'back', this.current() );
 
                 }
             },
