@@ -242,6 +242,8 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
 
                     propertyName = this.Class.properties[ len ];
 
+                    if( propertyName === undefined || !this.hasOwnProperty( propertyName) ) continue;
+
                     data[ propertyName ] = this[ propertyName ];
                 }
 
