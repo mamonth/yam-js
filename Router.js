@@ -170,9 +170,65 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
          * @param params
          * @returns {string}
          */
-        buildParamsString: function( params )
-        {
-            return decodeURIComponent( $.param( params ) );
+        buildParamsString: function (data, traditional, noArrayKeys) {
+            var s = [],
+                rbracket = /\[\]$/,
+                r20 = /%20/g,
+
+                encode = function (value, encoded) {
+                    return encoded ? value : encodeURIComponent(value);
+                },
+
+                add = function (key, value, keyEncoded) {
+
+                    if( $.isFunction(value) ) return;
+
+                    if( typeof value == 'undefined' || value === null ) value = '';
+
+                    s[s.length] = encode(key, keyEncoded) + '=' + encode(value);
+                },
+
+                buildParams = function (key, data, traditional, add, keyEncoded) {
+                    if (jQuery.isArray(data)) {
+                        data.forEach( function ( v, i ) {
+                            if (traditional || rbracket.test(key)) {
+                                add(key, v);
+
+                            } else {
+                                buildParams(encode(key, keyEncoded) + '[' + (!noArrayKeys && (typeof v === "object" || jQuery.isArray(v)) ? i : '') + ']', v, traditional, add, true);
+                            }
+                        });
+
+                    } else if (data !== null && typeof data === 'object') {
+                        for( name in data ){
+                            if( name.match( /jQuery[0-9]+/ig ) ) return;
+
+                            buildParams(encode(key, keyEncoded) + '[' + encode(name) + ']', data[name], traditional, add, true);
+                        };
+
+                    } else {
+                        add(key, data, keyEncoded);
+                    }
+                };
+
+            // Set traditional to true for jQuery <= 1.3.2 behavior.
+            if (traditional === undefined) {
+                traditional = $.ajaxSettings.traditional;
+            }
+
+            if ( $.isArray(data) || (data.jquery && !$.isPlainObject(data))) {
+                $.each(data, function () {
+                    add(this.name, this.value);
+                });
+
+            } else {
+
+                for( key in data){
+                    buildParams(key, data[key], traditional, add);
+                }
+            }
+
+            return s.join('&').replace(r20, '+');
         }
     },
 
