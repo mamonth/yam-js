@@ -7,10 +7,11 @@
  * @version 0.3.2
  */
 define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], function( Router, State, Logger, IModule, ADeferredModule ) {
-    "use strict";
+    'use strict';
 
     /**
      * @class yam.Core
+     * @extends jQuery.Class
      */
     $.Class.extend( 'yam.Core',
         /* @static */
@@ -26,7 +27,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
 
             ready: function( selector, callback ) {
 
-                if( typeof selector === "function" ){
+                if( typeof selector === 'function' ){
                     callback = selector;
                     selector = undefined;
                 }
@@ -53,7 +54,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
         {
             options: {
                 routes: {},
-                baseNamespace: "App"
+                baseNamespace: 'App'
             },
 
             /**
@@ -78,13 +79,13 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
 
                 this.startTime = new Date().getTime();
 
-                if( this.Class._instance ) throw new Error("Another instance already created. Use getInstance()");
+                if( this.Class._instance ) throw new Error('Another instance already created. Use getInstance()');
 
                 this.Class._instance = this;
 
                 $.extend(this.options, options || {});
 
-                Logger.log(this,"Init");
+                Logger.log(this,'Init');
 
                 // Binding route rules to modules
                 $.each(this.options.routes, function (moduleName, routes) {
@@ -111,7 +112,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
 
                 // skip this run in case skip
                 if( stateData !== undefined && stateData.skipRun === true && this.runCnt > 0 ){
-                    Logger.log( this, "skipping run" );
+                    Logger.log( this, 'skipping run' );
                     return;
                 }
 
@@ -134,7 +135,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
                 // 404 behavior
                 if( $.isEmptyObject(matches) ) {
 
-                    Logger.log(this, "Request unresolved (" + State.current().location + ")");
+                    Logger.log(this, 'Request unresolved (' + State.current().location + ')');
 
                     this._setReady();
 
@@ -147,7 +148,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
 
                         this.timers[className] = new Date().getTime();
 
-                        require([this._getModuleNameByClass(className)], this.proxy( "_onLoadModule", className, matches[className] ) );
+                        require( [this._getModuleNameByClass(className)], this.proxy( '_onLoadModule', className, matches[className] ) );
                     }
                 }
             },
@@ -156,14 +157,14 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
                 if (undefined === this._modules[className]) {
                     var classInstance = $.String.getObject(className , window, true);
 
-                    if(classInstance && typeof classInstance == "function") {
+                    if(classInstance && typeof classInstance == 'function') {
                         var module = new classInstance( params );
 
-                        Logger.log(module, "init");
+                        Logger.log(module, 'init');
 
                         this._modules[className] = module;
 
-                        Logger.log(this, className + " module registered");
+                        Logger.log(this, className + ' module registered');
                     } else if (this.debug) {
                         Logger.error('[App] Can not create instance of class "' + className + '" requested by path "' + this._getModuleNameByClass(className) + '"');
                     }
@@ -176,7 +177,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
                 if (undefined === this._modules[className]) return false;
 
                 if (this._modules[className].destruct !== undefined) {
-                    Logger.log(this._modules[className], "destruct");
+                    Logger.log(this._modules[className], 'destruct');
 
                     this._modules[className].destruct();
                 }
@@ -207,7 +208,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
 
             _onReadyModule: function (className) {
                     var time = new Date().getTime();
-                Logger.tLog(this._modules[className], className, "ready ["+(time - this.timers[className])+"ms]["+(time - this.startTime)+"ms]");
+                Logger.tLog(this._modules[className], className, 'ready ['+(time - this.timers[className])+'ms]['+(time - this.startTime)+'ms]');
                 delete(this._modulesToReady[className]);
 
                 var size = 0, key;
@@ -226,7 +227,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
              * @private
              */
             _unready: function () {
-                app.Logger.log(this, "Drop ready state");
+                app.Logger.log(this, 'Drop ready state');
 
                 this._ready = false;
                 this._modulesToReady = {};
@@ -241,7 +242,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
              */
             _setReady: function () {
                 var time = new Date().getTime();
-                Logger.tLog(this, "Ready ["+(time - this.startTime)+"ms]");
+                Logger.tLog(this, 'Ready ['+(time - this.startTime)+'ms]');
 
                 this._ready = true;
 
@@ -254,7 +255,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
 
                     var item = this.Class._readyCallbacks.shift();
 
-                    if( undefined === item.callback || typeof item.callback !== "function" ) continue;
+                    if( undefined === item.callback || typeof item.callback !== 'function' ) continue;
 
                     if( undefined === item.selector ) {
                         item.callback();
@@ -300,8 +301,8 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
     );
 
     // backward compatibility
-    if( app === undefined ) app = {};
-    app.App = yam.Core;
+    if( window.app === undefined ) window.app = {};
+    window.app.App = yam.Core;
 
     return yam.Core;
 });

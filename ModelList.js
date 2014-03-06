@@ -8,7 +8,7 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.0
  */
-define("app/ModelList", ["app/Observable","app/ModelList"], function () {
+define( ["./Observable"], function () {
 
     "use strict";
 

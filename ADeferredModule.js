@@ -4,7 +4,7 @@
  * @author Max Maximov <max.maximov@gmail.com>
  * @version 0.2.1
  */
-define("app/ADeferredModule", ["app/Hub", "app/Logger", "app/IModule"], function (Hub, Logger, IModule) {
+define( ["./Hub", "./Logger", "./IModule"], function (Hub, Logger, IModule) {
     "use strict";
 
     app.IModule.extend("app.ADeferredModule",

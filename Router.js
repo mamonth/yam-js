@@ -5,10 +5,10 @@
  *
  * @example
  *
- *  App.Route.add( /^sad\/?([0-9]+)?$/g, 'regular' )
- *  App.Route.add( 'sad/2', 'happy' );
+ *  yam.Route.add( /^sad\/?([0-9]+)?$/g, 'regular' )
+ *  yam.Route.add( 'sad/2', 'happy' );
  *
- *  var res = App.Route.match( 'sad/2' );
+ *  var res = yam.Route.match( 'sad/2' );
  *
  *  res = [
  *      happy:[],
@@ -21,8 +21,12 @@
 define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
     //"use strict";
 
-    $.Class.extend("app.Route",
-    /* @static */
+    /**
+     * @class yam.Route
+     * @extends jQuery.Class
+     */
+    $.Class.extend('yam.Route',
+    /** @static **/
     {
         _rules: [],
 
@@ -98,13 +102,13 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
 
                 if( !hash[0] ) continue;
 
-                var sc = hash[0].indexOf("["), cs = hash[0].indexOf("]");
+                var sc = hash[0].indexOf('['), cs = hash[0].indexOf(']');
 
                 if( sc > 0 && cs > 0 ) {
 
                     var paramName = hash[0].substr( 0, sc );
 
-                    if( hash[0].charAt( sc+1 ) == "]" ) {
+                    if( hash[0].charAt( sc+1 ) == ']' ) {
 
                         if( !params[ paramName ] ) { params[ paramName ] = [] }
 
@@ -128,6 +132,7 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
 
         getParamsString: function()
         {
+            // @TODO cut off History depency
             var url = window.History.getState().url, paramsPos = url.indexOf('?');
 
             if( paramsPos > 0 && paramsPos + 1 < url.length )
@@ -232,7 +237,7 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
         }
     },
 
-    /* @prototype */
+    /** @prototype **/
     {
         /**
          * Route name
@@ -290,6 +295,10 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
         }
     });
 
-    return app.Route;
+    //backward compatibility
+    if( undefined === window.app ) window.app = {};
+    window.app.Route = yam.Route;
+
+    return yam.Route;
 });
 

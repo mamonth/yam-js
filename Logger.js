@@ -2,14 +2,30 @@
  * App Logger module
  *
  * @author Max Maximov <max.maximov@gmail.com>
- * @version 0.2.1
+ * @author Andrew Tereshko <andrew.tereshko@gmail.com>
+ * @version 0.3
  */
-define("app/Logger", function () {
-    "use strict";
+define( function () {
+    'use strict';
 
-    $.Class.extend("app.Logger",
-    /* @static */
-    {
+    // Check if yam "namespace" exists
+    if( !window.yam ) window.yam = {};
+
+    // prepend local console link
+    var _stub       = function(){},
+        _ie         = navigator.userAgent.indexOf('MSIE') != -1,
+        _console    = window.console ? window.console : { log: _stub, debug: _stub, info: _stub, warn: _stub, error: _stub };
+
+    /**
+     * @class yam.Logger
+     *
+     * @type {Object}
+     */
+    yam.Logger = {
+
+        /**
+         * Log levels
+         */
         NONE    : 0,
         ERROR   : 1,
         WARN    : 2,
@@ -17,83 +33,70 @@ define("app/Logger", function () {
         DEBUG   : 4,
         LOG     : 5,
 
-        level: 1,
+        /**
+         * Current log level
+         */
+        level   : 1
+    };
 
-        ie: ( $.support.msie !== undefined ) ? $.support.msie : false,
+    // Short link
+    var Logger = yam.Logger;
 
-        init: function() {
 
-            window["_console"] = typeof console != "undefined" ?
-                console :
-                {
-                    log:function() {},
-                    debug:function() {},
-                    info:function() {},
-                    warn:function() {},
-                    error:function() {}
-                };
+    Logger.log      = function () {
+        if( Logger.level >= Logger.LOG ) Logger._echo( arguments, 'log' );
+    }
 
-            // Crunch in case direct console use
-            if( window.console === undefined ) {
-                window.console = {
-                    log:function() {},
-                    debug:function() {},
-                    info:function() {},
-                    warn:function() {},
-                    error:function() {}
-                };
-            }
-                
-        },
+    Logger.debug    = function () {
+        if( Logger.level >= Logger.DEBUG ) Logger._echo( arguments, 'debug' );
+    }
 
-        _parseArgs: function () {
-            var args = Array.prototype.slice.call(arguments[0]);
+    Logger.info     = function () {
+        if( Logger.level >= Logger.INFO ) Logger._echo( arguments, 'info' );
+    }
 
-            // Тут бы, по-хорошему, интерфейс нужен, вместо typeof args[0] == "object"
-            return ([typeof args[0] == "object" ? "[" + args[0].constructor.fullName + "]" : args[0]].concat(args.slice(1)));
-        },
+    Logger.warn     = function () {
+        if( Logger.level >= Logger.WARN ) Logger._echo( arguments, 'warn' );
+    }
 
-        _echo: function (args, type) {
-            var args = app.Logger._parseArgs(args);
+    Logger.error    = function () {
+        if( Logger.level >= Logger.ERROR ) Logger._echo( arguments, 'error' );
+    }
 
-            /*@cc_on app.Logger.ie = true; @*/
-
-            if (app.Logger.debug && window.console && window.console[type]) {
-                if (app.Logger.ie) {
-                    console[type](args.join(" "));
-                } else {
-                    console[type].apply(console, args);
-                }
-            }
-        },
-
-        log: function () {
-            if (app.Logger.level >= app.Logger.LOG) app.Logger._echo(arguments, "log");
-        },
-        tLog: function () {
-            if ( (app.Logger.level >= app.Logger.LOG || app.Logger.timing) && navigator.userAgent.indexOf('MSIE') ==-1 ) console["log"].apply(console, app.Logger._parseArgs(arguments));//app.Logger._echo(arguments, "log");
-        },
-
-        debug: function () {
-            if (app.Logger.level >= app.Logger.DEBUG) app.Logger._echo(arguments, "debug");
-        },
-
-        info: function () {
-            if (app.Logger.level >= app.Logger.INFO) app.Logger._echo(arguments, "info");
-        },
-
-        warn: function () {
-            if (app.Logger.level >= app.Logger.WARN) app.Logger._echo(arguments, "warn");
-        },
-
-        error: function () {
-            if (app.Logger.level >= app.Logger.ERROR) app.Logger._echo(arguments, "error");
+    /**
+     * @deprecated ( Very odd method )
+     */
+    Logger.tLog     = function () {
+        if ( (Logger.level >= Logger.LOG || Logger.timing) && Logger.ie ){
+            _console["log"].apply( _console, Logger._parseArgs(arguments));
         }
-    },
-    /* @prototype */
-    {
-    });
+    }
 
-    return app.Logger;
+    Logger._parseArgs   = function () {
+        var args    = Array.prototype.slice.call( arguments[0]),
+            isClass = typeof args[0] == 'object' && args[0].constructor.fullName;//@todo - replace this by interface check
+
+        return ([ isClass ? '[' + args[0].constructor.fullName + ']' : args[0]].concat(args.slice(1)));
+    }
+
+    Logger._echo    = function (args, type) {
+        var args = Logger._parseArgs(args);
+
+        /*@cc_on _ie = true; @*/
+
+        if (Logger.debug && window.console && window.console[type]) {
+            if ( _ie) {
+                console[type](args.join(' '));
+            } else {
+                console[type].apply(console, args);
+            }
+        }
+    }
+
+    //backward compatibility
+    if( !window.app ) window.app = {};
+    window.app.Logger = yam.Logger;
+
+    return Logger;
 });
 

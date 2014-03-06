@@ -4,15 +4,16 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.0
  */
-define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], function () {
+define( ['./Observable'], function () {
 
-    "use strict";
+    'use strict';
 
     /**
-     * @class app.AModel
+     * @class yam.AModel
+     * @extends yam.Observable
      */
-    app.Observable.extend("app.AModel",
-        /* @static */
+    app.Observable.extend( 'yam.AModel',
+        /** @static **/
         {
             properties: [],
 
@@ -50,11 +51,12 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
                 // Prepare troops
                 var deferred = $.Deferred();
 
-                if ( !app.ModelWatcher.has( this, identity ) ) {
-
-                    // here comes request (ajax or something...)
-                    // don't forget to resolve deferred object ( or you will make him sad )
-                }
+                // for watched model
+//                if ( !app.ModelWatcher.has( this, identity ) ) {
+//
+//                    // here comes request (ajax or something...)
+//                    // don't forget to resolve deferred object ( or you will make him sad )
+//                }
 
                 // Landing
                 return deferred.promise();
@@ -127,7 +129,7 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
             }
 
         },
-        /* @prototype */
+        /** @prototype **/
         {
             /**
              * base identity property
@@ -252,6 +254,12 @@ define("app/AModel", ["app/Observable","app/ModelWatcher","app/ModelList"], func
 
         }
     );
+
+    //backward compatibility
+    if( undefined === window.app ) window.app = {};
+    window.app.AModel = yam.AModel;
+
+    return yam.AModel;
 });
 
 

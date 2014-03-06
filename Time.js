@@ -4,7 +4,7 @@
  *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  */
-define("app/Time", ["app/I18n","app/Logger","app/Hub"], function () {
+define( ["./I18n","./Logger","./Hub"], function () {
     "use strict";
 
 	// Use app.I18n as lang

@@ -1,14 +1,19 @@
 /**
- * App PubSub Hub module
+ * Subscribe/publication hub
  *
  * @author Max Maximov <max.maximov@gmail.com>
+ * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.2.1
  */
-define("app/Hub", ["app/Logger"], function () {
+define( ['./Logger'], function () {
     "use strict";
 
-    $.Class.extend("app.Hub",
-    /* @static */
+    /**
+     * @class yam.Hub
+     * @extends jQuery.Class
+     */
+    $.Class.extend('yam.Hub',
+    /** @static **/
     {
         _domNode: $("<i/>"),
         stack:{},
@@ -71,10 +76,14 @@ define("app/Hub", ["app/Logger"], function () {
 
         }
     },
-    /* @prototype */
+    /** @prototype **/
     {
     });
 
-    return app.Hub;
+    //backward compatibility
+    if( window.app === undefined ) window.app = {};
+    window.app.Hub = yam.Hub;
+
+    return yam.Hub;
 });
 

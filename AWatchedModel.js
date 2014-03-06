@@ -3,7 +3,7 @@
  *
  * @version 0.3.0
  */
-define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList","app/AModel"], function () {
+define( ["./Observable","./ModelWatcher","./ModelList","./AModel"], function () {
 
     "use strict";
 
@@ -82,6 +82,8 @@ define("app/AWatchedModel", ["app/Observable","app/ModelWatcher","app/ModelList"
 
         }
     );
+
+    return app.AWatchedModel;
 });
 
 

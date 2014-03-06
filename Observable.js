@@ -6,7 +6,7 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.0
  */
-define("app/Observable", function () {
+define( function () {
 
     "use strict";
 

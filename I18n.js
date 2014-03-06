@@ -4,7 +4,7 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.1
  */
-define("app/I18n", ["app/Logger"], function() {
+define( ["./Logger"], function() {
 
 	app.I18n = function( groupAlias, text, ucfirst ){
 

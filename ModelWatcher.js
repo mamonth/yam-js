@@ -5,7 +5,7 @@
  * @version 0.3.0
  */
 
-define("app/ModelWatcher", [ /* "app/Model" */ ], function () {
+define( [ /* "app/Model" */ ], function () {
 
     "use strict";
 
