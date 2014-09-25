@@ -1,47 +1,68 @@
 /**
  * App Deferred Module Abstract Class
  *
+ * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @author Max Maximov <max.maximov@gmail.com>
- * @version 0.2.1
+ * @version 0.3.4
  */
-define( ["./Hub", "./Logger", "./IModule"], function (Hub, Logger, IModule) {
-    "use strict";
+(function( factory ) {
 
-    app.IModule.extend("app.ADeferredModule",
-        /* @prototype */
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['./IModule'], factory);
+    } else if (typeof exports === 'object') {
+
+        var IModule = require('./IModule');
+
+        // CommonJS
+        module.exports = factory( IModule );
+    } else {
+        // Browser globals
+        factory( yam.IModule );
+    }
+
+}( function ( IModule ) {
+    'use strict';
+
+    /**
+     * @class yam.ADeferredModule
+     * @extends yam.IModule
+     */
+    IModule.extend('yam.ADeferredModule',
+        /** @prototype **/
         {
-            _readyCallbacks: undefined,
+            _readyCallbacks: null,
+
             setup: function(){
                 this._readyCallbacks = [];
             },
+
             onReady: function ( callback, runOnce ) {
 
                 runOnce = runOnce === undefined ? true : runOnce;
 
-                if( typeof callback !== "function" ) throw new Error("callback must be function");
+                if( typeof callback !== 'function' ) throw new Error('callback must be function');
 
                 this._readyCallbacks.push({ runOnce: runOnce, callback: callback });
             },
+
             setReady: function(){
 
                 var len = this._readyCallbacks.length;
 
                 while( len-- ) {
 
-                    if( this._readyCallbacks[len].callback !== undefined && typeof this._readyCallbacks[len].callback == "function" ) {
+                    if( this._readyCallbacks[len].callback !== undefined && typeof this._readyCallbacks[len].callback == 'function' ) {
                         this._readyCallbacks[len].callback();
                     }
 
                     if( this._readyCallbacks[len].runOnce !== false ) {
                         this._readyCallbacks.splice(len, 1);
                     }
-
                 }
-
             }
 
         });
 
-    return app.ADeferredModule;
-});
-
+    return yam.ADeferredModule;
+}));

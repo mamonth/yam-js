@@ -5,7 +5,23 @@
  * @author Max Maximov <max.maximov@gmail.com>
  * @version 0.2.1
  */
-define( function() {
+(function( factory ) {
+
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['jquery-class'], factory);
+    } else if (typeof exports === 'object') {
+
+        var Class = require('jquery-class');
+
+        // CommonJS
+        module.exports = factory( Class );
+    } else {
+        // Browser globals
+        factory( jQuery.Class );
+    }
+
+}( function( Class ) {
     'use strict';
 
     /**
@@ -15,7 +31,7 @@ define( function() {
      * @class yam.IModule
      * @extends jQuery.Class
      */
-    $.Class.extend( 'yam.IModule',
+    Class.extend( 'yam.IModule',
         {
             /**
              * Constructor.
@@ -44,10 +60,5 @@ define( function() {
         }
     );
 
-    //backward compatibility
-    if(!window.app) window.app = {};
-    window.app.IModule = yam.IModule;
-
     return yam.IModule;
-});
-
+}));

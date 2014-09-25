@@ -10,13 +10,31 @@
  *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  */
-define( function() {
-    "use strict";
+(function( factory ) {
+
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['jquery','jquery-class'], factory);
+    } else if (typeof exports === 'object') {
+
+        var Class   = require('jquery-class'),
+            jQuery  = require('jquery');
+
+        // CommonJS
+        module.exports = factory( jQuery, Class );
+    } else {
+        // Browser globals
+        factory( jQuery, jQuery.Class );
+    }
+
+}( function( $, Class ) {
+    'use strict';
 
     /**
      * @class yam.State
+     * @extends jQuery.Class
      */
-    $.Class.extend('yam.State',
+    Class.extend('yam.State',
         /* @static */
         {
             /**
@@ -31,7 +49,7 @@ define( function() {
              * Position of current state in stack;
              *
              * @private
-             * @property {Numeric}
+             * @property {Number}
              */
             _currentKey: 0,
 
@@ -58,9 +76,9 @@ define( function() {
             /**
              * Create and push new state to stack ( and make it current ).
              *
-             * @param location
-             * @param data
-             * @param title
+             * @param {yam.State|string} location
+             * @param {object} [data]
+             * @param {string} [title]
              */
             push: function( location, data, title ){
 
@@ -80,9 +98,9 @@ define( function() {
             /**
              * Replaces current state
              *
-             * @param location
-             * @param data
-             * @param title
+             * @param {yam.State|string} location
+             * @param {object} [data]
+             * @param {string} [title]
              */
             replace: function( location, data, title ){
 
@@ -98,15 +116,11 @@ define( function() {
             /**
              * Rewinds state to N steps backward
              *
-             * @param steps
+             * @param {Number} steps
              */
             back: function( steps ){
 
-                steps = new Number( steps );
-
-                if( isNaN( steps ) || steps < 1 ) steps = 1;
-
-                steps = Math.min( steps, this._currentKey );
+                steps = ( !steps || isNaN( steps ) ) ? 1 : Math.min( steps, this._currentKey );
 
                 if( this._currentKey ){
 
@@ -115,35 +129,50 @@ define( function() {
                     $(this)
                         .trigger( 'locationChange', this.current() )
                         .trigger( 'back', this.current() );
-
                 }
             },
 
             /**
              * Rewinds state to N steps forward
              *
-             * @param steps
+             * @param {Number} steps
              */
             forward: function( steps ){
-                if( steps === undefined ) steps = 1;
 
+                steps = ( !steps || isNaN( steps ) ) ? 1 : Math.min( steps, this._stack.length - ( this._currentKey + 1 ) );
 
-                $(this).trigger( 'locationChange', state );
-                $(this).trigger( 'forward', state );
+                if( this._currentKey < this._stack.length ){
+
+                    this._currentKey = this._currentKey + steps;
+
+                    $(this).trigger( 'locationChange', this.current() );
+                    $(this).trigger( 'forward', this.current() );
+                }
             }
         },
         /* @prototype */
         {
+            /**
+             * @property {String}
+             */
             location    : '',
+
+            /**
+             * @property {String}
+             */
             title       : '',
-            data        : undefined,
+
+            /**
+             * @property {Object|undefined}
+             */
+            data        : null,
 
             /**
              * @constructor
              *
-             * @param location
-             * @param data
-             * @param title
+             * @param {String} location
+             * @param {Object} [data]
+             * @param {String} [title]
              */
             init: function( location, data, title ){
 
@@ -154,10 +183,5 @@ define( function() {
         }
     );
 
-
-    // backward compatibility
-    if( app === undefined ) var app = {};
-    app.State = yam.State;
-
     return yam.State;
-});
+}));

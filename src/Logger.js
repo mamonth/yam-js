@@ -1,102 +1,102 @@
 /**
  * App Logger module
  *
- * @author Max Maximov <max.maximov@gmail.com>
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
- * @version 0.3
  */
-define( function () {
-    'use strict';
+(function( factory ) {
 
-    // Check if yam "namespace" exists
-    if( !window.yam ) window.yam = {};
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['jquery-class'], factory);
+    } else if (typeof exports === 'object') {
+
+        var Class = require('jquery-class');
+
+        // CommonJS
+        module.exports = factory( Class );
+    } else {
+        // Browser globals
+        factory( jQuery.Class );
+    }
+
+}( function ( Class ) {
+    'use strict';
 
     // prepend local console link
     var _stub       = function(){},
-        _ie         = navigator.userAgent.indexOf('MSIE') != -1,
-        _console    = window.console ? window.console : { log: _stub, debug: _stub, info: _stub, warn: _stub, error: _stub };
+        _ie         = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('MSIE') != -1,
+        _console    = console ? console : { log: _stub, debug: _stub, info: _stub, warn: _stub, error: _stub };
 
     /**
      * @class yam.Logger
+     * @extends jQuery.Class
      *
-     * @type {Object}
      */
-    yam.Logger = {
+    return Class.extend('yam.Logger',
+        /** @static **/
+        {
+            /**
+             * Log levels
+             */
+            NONE    : 0,
+            ERROR   : 1,
+            WARN    : 2,
+            INFO    : 3,
+            DEBUG   : 4,
+            LOG     : 5,
 
-        /**
-         * Log levels
-         */
-        NONE    : 0,
-        ERROR   : 1,
-        WARN    : 2,
-        INFO    : 3,
-        DEBUG   : 4,
-        LOG     : 5,
+            /**
+             * Current log level
+             */
+            level   : 1,
 
-        /**
-         * Current log level
-         */
-        level   : 1
-    };
+            log     : function () {
 
-    // Short link
-    var Logger = yam.Logger;
+                if( this.level >= this.LOG ) this._echo( arguments, 'log' );
+            },
 
+            debug   : function () {
 
-    Logger.log      = function () {
-        if( Logger.level >= Logger.LOG ) Logger._echo( arguments, 'log' );
-    }
+                if( this.level >= this.DEBUG ) this._echo( arguments, 'debug' );
+            },
 
-    Logger.debug    = function () {
-        if( Logger.level >= Logger.DEBUG ) Logger._echo( arguments, 'debug' );
-    }
+            info    : function () {
 
-    Logger.info     = function () {
-        if( Logger.level >= Logger.INFO ) Logger._echo( arguments, 'info' );
-    }
+                if( this.level >= this.INFO ) this._echo( arguments, 'info' );
+            },
 
-    Logger.warn     = function () {
-        if( Logger.level >= Logger.WARN ) Logger._echo( arguments, 'warn' );
-    }
+            warn    : function () {
 
-    Logger.error    = function () {
-        if( Logger.level >= Logger.ERROR ) Logger._echo( arguments, 'error' );
-    }
+                if( this.level >= this.WARN ) this._echo( arguments, 'warn' );
+            },
 
-    /**
-     * @deprecated ( Very odd method )
-     */
-    Logger.tLog     = function () {
-        if ( (Logger.level >= Logger.LOG || Logger.timing) && Logger.ie ){
-            _console["log"].apply( _console, Logger._parseArgs(arguments));
-        }
-    }
+            error   : function () {
 
-    Logger._parseArgs   = function () {
-        var args    = Array.prototype.slice.call( arguments[0]),
-            isClass = typeof args[0] == 'object' && args[0].constructor.fullName;//@todo - replace this by interface check
+                if( this.level >= this.ERROR ) this._echo( arguments, 'error' );
+            },
 
-        return ([ isClass ? '[' + args[0].constructor.fullName + ']' : args[0]].concat(args.slice(1)));
-    }
+            _parseArgs  : function () {
 
-    Logger._echo    = function (args, type) {
-        var args = Logger._parseArgs(args);
+                var args    = Array.prototype.slice.call( arguments[0] ),
+                    isClass = args[0] instanceof jQuery.Class;
 
-        /*@cc_on _ie = true; @*/
+                return ([ isClass ? '[' + args[0].constructor.fullName + ']' : args[0] ].concat( args.slice(1) ) );
+            },
 
-        if (Logger.debug && window.console && window.console[type]) {
-            if ( _ie) {
-                console[type](args.join(' '));
-            } else {
-                console[type].apply(console, args);
+            _echo   : function (args, type) {
+
+                var args = Logger._parseArgs(args);
+
+                if ( _ie) {
+                    _console[type]( args.join(' ') );
+                } else {
+                    _console[type].apply(console, args);
+                }
             }
+        },
+        {
         }
-    }
+    );
 
-    //backward compatibility
-    if( !window.app ) window.app = {};
-    window.app.Logger = yam.Logger;
-
-    return Logger;
-});
+}));
 

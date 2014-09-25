@@ -5,17 +5,16 @@
     "author"  : "Andrew Tereshko <andrew.tereshko@gmail.com>",
     "repository": {
         "type": "git",
-        "url": "https://github.com/mamonth/yam-js.git"
+        "url": "https://github.com/mamonth/yam-js.git#v0.4.0"
     },
     "dependencies": {
-        "jsdom": "~1.0.0",
-        "jquery": "~2.1.1",
-        "jquery-class": "git@github.com:mamonth/jquery-class.git"
+        "jquery-class": "mamonth/jquery-class"
     },
     "devDependencies": {
         "grunt": "~0.4.5",
         "grunt-contrib-watch": "~0.6.1",
         "grunt-jasmine-node-new": "~0.3.2",
+        "grunt-contrib-concat": "~0.5.0",
         "grunt-contrib-uglify": "~0.5.1"
     },
     "main": "dist/yam.js",

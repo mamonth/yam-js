@@ -6,14 +6,31 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.0
  */
-define( function () {
+(function( factory ) {
 
-    "use strict";
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['jquery-class'], factory);
+    } else if (typeof exports === 'object') {
+
+        var Class = require('jquery-class');
+
+        // CommonJS
+        module.exports = factory( Class );
+    } else {
+        // Browser globals
+        factory( jQuery.Class );
+    }
+
+}( function ( Class ) {
+
+    'use strict';
 
     /**
-     * @class app.Observable
+     * @class yam.Observable
+     * @extends jQuery.Class
      */
-    $.Class.extend("app.Observable",
+    Class.extend('app.Observable',
         /* @prototype */
         {
             /**
@@ -25,10 +42,10 @@ define( function () {
              * Attaches observer function to object
              *
              * @example attach observer on specific object event
-             * app.Observable.attachObserver( "event", function(){ } );
+             * yam.Observable.attachObserver( 'event', function(){ } );
              *
              * @example attach observer on all object events
-             * app.Observable.attachObserver( function( e ){ alert(e) } );
+             * yam.Observable.attachObserver( function( e ){ alert(e) } );
              *
              * @param event
              * @param observer
@@ -38,7 +55,7 @@ define( function () {
                 if( arguments.length < 2 )
                 {
                     observer = event;
-                    event = "**WILDCARD**";
+                    event = '**WILDCARD**';
                 }
 
                 if( !(observer instanceof Object) && !(observer instanceof Function) ) {
@@ -139,4 +156,4 @@ define( function () {
 
         });
 
-});
+}));

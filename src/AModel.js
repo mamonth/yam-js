@@ -2,17 +2,32 @@
  * Abstract model class
  *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
- * @version 0.3.0
+ * @version 0.3.4
  */
-define( ['./Observable'], function () {
+(function( factory ) {
 
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['./Observable'], factory);
+    } else if (typeof exports === 'object') {
+
+        var Observable = require('./Observable');
+
+        // CommonJS
+        module.exports = factory( Observable );
+    } else {
+        // Browser globals
+        factory( yam.Observable );
+    }
+
+}( function ( Observable ) {
     'use strict';
 
     /**
      * @class yam.AModel
      * @extends yam.Observable
      */
-    app.Observable.extend( 'yam.AModel',
+    Observable.extend( 'yam.AModel',
         /** @static **/
         {
             properties: [],
@@ -255,11 +270,6 @@ define( ['./Observable'], function () {
         }
     );
 
-    //backward compatibility
-    if( undefined === window.app ) window.app = {};
-    window.app.AModel = yam.AModel;
-
     return yam.AModel;
-});
-
+}));
 

@@ -1,1 +1,4 @@
 .svn
+.idea/
+node_modules/
+build/

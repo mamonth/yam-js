@@ -1,20 +1,42 @@
 /**
  * Base application class
  *
- * Contains various helper methods, store and handle "Controller" modules.
+ * Contains various helper methods, store and handle modules.
  *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.2
  */
-define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], function( Router, State, Logger, IModule, ADeferredModule ) {
+(function( factory ) {
+
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define( ['jquery','jquery-class', './Router', './State', './Logger', './IModule', './ADeferredModule'], factory );
+    } else if (typeof exports === 'object') {
+
+        var jQuery          = require('jquery'),
+            Class           = require('jquery-class'),
+            Router          = require('./Router'),
+            State           = require('./State'),
+            Logger          = require('./Logger'),
+            IModule         = require('./IModule'),
+            ADeferredModule = require('./ADeferredModule');
+
+        // CommonJS
+        module.exports = factory( jQuery, Class, Router, State, Logger, IModule, ADeferredModule );
+    } else {
+        // Browser globals
+        factory( jQuery, jQuery.Class, yam.Router, yam.State, yam.Logger, yam.IModule, yam.ADeferredModule );
+    }
+
+}( function( $, Class, Router, State, Logger, IModule, ADeferredModule ) {
     'use strict';
 
     /**
      * @class yam.Core
      * @extends jQuery.Class
      */
-    $.Class.extend( 'yam.Core',
-        /* @static */
+    Class.extend( 'yam.Core',
+        /** @static **/
         {
             _instance: undefined,
 
@@ -50,7 +72,7 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
                 return def.promise();
             }
         },
-        /* @prototype */
+        /** @prototype **/
         {
             options: {
                 routes: {},
@@ -300,10 +322,5 @@ define( [ './Router', './State', './Logger', './IModule', './ADeferredModule'], 
         }
     );
 
-    // backward compatibility
-    if( window.app === undefined ) window.app = {};
-    window.app.App = yam.Core;
-
     return yam.Core;
-});
-
+}));

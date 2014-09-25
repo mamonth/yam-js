@@ -18,14 +18,33 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.2.1
  */
-define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
-    //"use strict";
+(function( factory ) {
+
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define( ['jquery','jquery-class', './Logger', './State'], factory );
+    } else if (typeof exports === 'object') {
+
+        var Class   = require('jquery-class'),
+            Logger  = require('./Logger'),
+            State   = require('./State'),
+            jQuery  = require('jquery');
+
+        // CommonJS
+        module.exports = factory( jQuery, Class, Logger, State );
+    } else {
+        // Browser globals
+        factory( jQuery, jQuery.Class, yam.Logger, yam.State );
+    }
+
+}( function( $, Class, Logger, State ) {
+    'use strict';
 
     /**
      * @class yam.Route
      * @extends jQuery.Class
      */
-    $.Class.extend('yam.Route',
+    Class.extend('yam.Route',
     /** @static **/
     {
         _rules: [],
@@ -68,18 +87,6 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
             }
 
             return result;
-        },
-
-        /**
-         * Get current state path
-         *
-         * @deprecated since 0.3.2, now yam.State.current().location must be used
-         *
-         * @returns {String}
-         */
-        getCurrentPath: function() {
-
-            return State.current().location;
         },
 
         /**
@@ -205,11 +212,11 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
                         });
 
                     } else if (data !== null && typeof data === 'object') {
-                        for( name in data ){
+                        for( var name in data ){
                             if( name.match( /jQuery[0-9]+/ig ) ) return;
 
                             buildParams(encode(key, keyEncoded) + '[' + encode(name) + ']', data[name], traditional, add, true);
-                        };
+                        }
 
                     } else {
                         add(key, data, keyEncoded);
@@ -228,7 +235,7 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
 
             } else {
 
-                for( key in data){
+                for( var key in data){
                     buildParams(key, data[key], traditional, add);
                 }
             }
@@ -295,10 +302,5 @@ define( ['./Hub', './Logger', './State'], function( Hub, Logger, State ) {
         }
     });
 
-    //backward compatibility
-    if( undefined === window.app ) window.app = {};
-    window.app.Route = yam.Route;
-
     return yam.Route;
-});
-
+}));
