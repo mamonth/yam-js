@@ -4,10 +4,12 @@
     "version": "0.4.0",
     "author"  : "Andrew Tereshko <andrew.tereshko@gmail.com>",
     "repository": {
-        "type": "git",
-        "url": "https://github.com/mamonth/yam-js.git#v0.4.0"
+        "type"  : "git",
+        "url"   : "https://github.com/mamonth/yam-js.git#v0.4.0"
     },
     "dependencies": {
+        "jsdom"       : "latest",
+        "jquery"      : ">=2.1",
         "jquery-class": "mamonth/jquery-class"
     },
     "devDependencies": {
