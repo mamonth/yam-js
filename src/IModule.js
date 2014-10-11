@@ -5,7 +5,7 @@
  * @author Max Maximov <max.maximov@gmail.com>
  * @version 0.2.1
  */
-define( 'yam.IModule', ['jquery-class'], function( Class ) {
+define( 'yam/IModule', ['jquery-class'], function( Class ) {
     'use strict';
 
     /**
