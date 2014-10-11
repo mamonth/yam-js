@@ -3,32 +3,16 @@
  *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @author Max Maximov <max.maximov@gmail.com>
- * @version 0.3.4
+ * @version 0.4.4
  */
-(function( factory ) {
-
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['./IModule'], factory);
-    } else if (typeof exports === 'object') {
-
-        var IModule = require('./IModule');
-
-        // CommonJS
-        module.exports = factory( IModule );
-    } else {
-        // Browser globals
-        factory( yam.IModule );
-    }
-
-}( function ( IModule ) {
+define( 'yam/ADeferredModule', ['yam/IModule'], function ( IModule ) {
     'use strict';
 
     /**
      * @class yam.ADeferredModule
      * @extends yam.IModule
      */
-    IModule.extend('yam.ADeferredModule',
+    return IModule.extend('yam.ADeferredModule',
         /** @prototype **/
         {
             _readyCallbacks: null,
@@ -63,6 +47,4 @@
             }
 
         });
-
-    return yam.ADeferredModule;
-}));
+});

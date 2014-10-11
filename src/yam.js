@@ -9,6 +9,7 @@
     var modules = [
             'Logger',
             'IModule',
+            'ADeferredModule',
             'Hub',
             'Observable',
             'State',
