@@ -69,7 +69,7 @@ define('yam/Logger', ['jquery-class'], function ( Class ) {
 
             _echo   : function (args, type) {
 
-                var args = Logger._parseArgs(args);
+                var args = this._parseArgs(args);
 
                 if ( _ie) {
                     _console[type]( args.join(' ') );
