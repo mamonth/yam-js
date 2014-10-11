@@ -62,7 +62,7 @@ define('yam/Logger', ['jquery-class'], function ( Class ) {
             _parseArgs  : function () {
 
                 var args    = Array.prototype.slice.call( arguments[0] ),
-                    isClass = args[0] instanceof jQuery.Class;
+                    isClass = args[0] instanceof Class;
 
                 return ([ isClass ? '[' + args[0].constructor.fullName + ']' : args[0] ].concat( args.slice(1) ) );
             },
