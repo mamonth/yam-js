@@ -162,7 +162,7 @@ define( 'yam/AModel', ['yam/Observable'], function ( Observable ) {
 
                 for (var param in values) {
 
-                    var setter = "set" + this.Class._getMethodEnding( param );
+                    var setter = "set" + this.constructor._getMethodEnding( param );
 
                     if (undefined === this[ setter ] || typeof this[setter] !== "function") continue;
 
@@ -176,7 +176,7 @@ define( 'yam/AModel', ['yam/Observable'], function ( Observable ) {
              * @return {String}
              */
             getIdentityValue: function(){
-                return this[ this.Class.getIdentity() ] !== undefined ? this[ this.Class.getIdentity() ] : undefined;
+                return this[ this.constructor.getIdentity() ] !== undefined ? this[ this.constructor.getIdentity() ] : undefined;
             },
 
             /**
@@ -239,9 +239,9 @@ define( 'yam/AModel', ['yam/Observable'], function ( Observable ) {
                 var data = {},
                     propertyName;
 
-                for( var len = this.Class.properties.length; len >= 0; --len ){
+                for( var len = this.constructor.properties.length; len >= 0; --len ){
 
-                    propertyName = this.Class.properties[ len ];
+                    propertyName = this.constructor.properties[ len ];
 
                     if( propertyName === undefined || !this.hasOwnProperty( propertyName) ) continue;
 

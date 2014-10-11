@@ -41,7 +41,7 @@ define( 'yam/AWatchedModel', ['yam/Observable','yam/ModelWatcher','yam/ModelList
 
                         for (var param in data) {
 
-                            var setter = "set" + model.Class._getMethodEnding( param );
+                            var setter = "set" + model.constructor._getMethodEnding( param );
 
                             if (undefined === model[ setter ] || typeof model[setter] !== "function") continue;
 
@@ -75,7 +75,7 @@ define( 'yam/AWatchedModel', ['yam/Observable','yam/ModelWatcher','yam/ModelList
                 this._super( values );
 
                 // if available identity property - register model
-                if( undefined !== this[ this.Class.getIdentity() ] ){
+                if( undefined !== this[ this.constructor.getIdentity() ] ){
 
                     app.ModelWatcher.register( this );
                 }

@@ -176,7 +176,7 @@ define( 'yam/ModelList', ['yam/Observable'], function ( Observable ) {
              */
             remove: function( model ){
 
-                var keys = this._getKeyBy( model.Class.getIdentity(), model.getIdentityValue() ),
+                var keys = this._getKeyBy( model.constructor.getIdentity(), model.getIdentityValue() ),
                     kLen = keys.length;
 
                 if( kLen ){
@@ -213,7 +213,7 @@ define( 'yam/ModelList', ['yam/Observable'], function ( Observable ) {
 
                 var keys = this._getKeyBy( property, value ),
                     kLen = keys.length,
-                    list = new this.Class( this._classDef );
+                    list = new this.constructor( this._classDef );
 
                 for( var key = 0; key < kLen; key++ ){
 

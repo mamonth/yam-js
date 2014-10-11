@@ -35,18 +35,18 @@ define( 'yam/ModelWatcher', ['jquery-class', 'yam/AModel'], function ( Class, AM
              */
             register: function( modelInstance ){
 
-                if( !( modelInstance instanceof AModel ) || undefined === modelInstance.Class.fullName )
+                if( !( modelInstance instanceof AModel ) || undefined === modelInstance.constructor.fullName )
                     throw new InvalidArgumentException( this.fullName + " can handle only yam.AModel instances");
 
                 var identity = modelInstance.getIdentityValue();
 
-                if( this.has( modelInstance.Class, identity ) )
-                    throw new Error( modelInstance.Class.fullName + " instance with identity " + identity + " already registered");
+                if( this.has( modelInstance.constructor, identity ) )
+                    throw new Error( modelInstance.constructor.fullName + " instance with identity " + identity + " already registered");
 
-                if( undefined === this._storage[ modelInstance.Class.fullName ] )
-                    this._storage[ modelInstance.Class.fullName ] = {};
+                if( undefined === this._storage[ modelInstance.constructor.fullName ] )
+                    this._storage[ modelInstance.constructor.fullName ] = {};
 
-                this._storage[ modelInstance.Class.fullName ][ identity ] = modelInstance;
+                this._storage[ modelInstance.constructor.fullName ][ identity ] = modelInstance;
             },
 
             /**
@@ -124,19 +124,19 @@ define( 'yam/ModelWatcher', ['jquery-class', 'yam/AModel'], function ( Class, AM
              */
             unregister: function( modelInstance ){
 
-                if( ! this.has( modelInstance.Class, modelInstance.getIdentityValue() ) )
-                    throw new InvalidArgumentException( "Model " + modelInstance.Class.fullName + " with id " + modelInstance.getIdentityValue() + " was not registered." );
+                if( ! this.has( modelInstance.constructor, modelInstance.getIdentityValue() ) )
+                    throw new InvalidArgumentException( "Model " + modelInstance.constructor.fullName + " with id " + modelInstance.getIdentityValue() + " was not registered." );
 
                 var storage = {};
 
-                for( var identity in this._storage[ modelInstance.Class.fullName ] ){
+                for( var identity in this._storage[ modelInstance.constructor.fullName ] ){
 
                     if( identity == modelInstance.getIdentityValue() ) continue;
 
-                    storage[ identity ] = this._storage[ modelInstance.Class.fullName ][ identity ];
+                    storage[ identity ] = this._storage[ modelInstance.constructor.fullName ][ identity ];
                 }
 
-                this._storage[ modelInstance.Class.fullName ] = storage;
+                this._storage[ modelInstance.constructor.fullName ] = storage;
             }
         },
         {

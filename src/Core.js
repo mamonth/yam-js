@@ -79,9 +79,9 @@ define( 'yam/Core', ['jquery', 'jquery-class', 'yam/Router', 'yam/State', 'yam/L
 
                 this.startTime = new Date().getTime();
 
-                if( this.Class._instance ) throw new Error('Another instance already created. Use getInstance()');
+                if( this.constructor._instance ) throw new Error('Another instance already created. Use getInstance()');
 
-                this.Class._instance = this;
+                this.constructor._instance = this;
 
                 $.extend(this.options, options || {});
 
@@ -251,9 +251,9 @@ define( 'yam/Core', ['jquery', 'jquery-class', 'yam/Router', 'yam/State', 'yam/L
 
                 // DOM ready
                 // @TODO - move this from framework core
-                while( this.Class._readyCallbacks.length > 0 ){
+                while( this.constructor._readyCallbacks.length > 0 ){
 
-                    var item = this.Class._readyCallbacks.shift();
+                    var item = this.constructor._readyCallbacks.shift();
 
                     if( undefined === item.callback || typeof item.callback !== 'function' ) continue;
 
