@@ -5,18 +5,21 @@
  * - Find model by property value
  * - Sort models by some property
  *
+ * @deprecated
+ *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.0
  */
-define( ["./Observable"], function () {
+define( 'yam/ModelList', ['yam/Observable'], function ( Observable ) {
 
-    "use strict";
+    'use strict';
 
     /**
-     * @class app.ModelList
+     * @class yam.ModelList
+     * @extends yam.Observable
      */
-    app.Observable.extend("app.ModelList",
-
+    return Observable.extend('yam.ModelList',
+        /** @prototype **/
         {
             _classDef: undefined,
             _collection: undefined,

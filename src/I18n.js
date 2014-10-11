@@ -1,46 +1,50 @@
 /**
  * Language and I18n methods
  *
+ * @deprecated
+ *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.1
  */
-define( ["./Logger"], function() {
+define( 'yam/I18n', ['yam/Logger'], function( Logger ) {
 
-	app.I18n = function( groupAlias, text, ucfirst ){
+    'use strict';
+
+	var I18n = function( groupAlias, text, ucfirst ){
 
 		ucfirst = ucfirst || false;
 
 		text = app.I18n.get( groupAlias, text, false );
 
-		return ucfirst ? app.I18n.ucfirst( text ) : text;
+		return ucfirst ? I18n.ucfirst( text ) : text;
 	};
 
-	app.I18n.storage = {};
+	I18n.storage = {};
 
-	app.I18n.dictMonths = [
+	I18n.dictMonths = [
 		"january", "february", "march", "april", "may", "june",
 		"july", "august", "september", "october", "november", "december"
 	];
 
-	app.I18n.dictDays = ["monday", "tuesday", "wednesday", "thursday", "friday","saturday","sunday"];
+	I18n.dictDays = ["monday", "tuesday", "wednesday", "thursday", "friday","saturday","sunday"];
 
-	app.I18n.register = function( groupAlias, strings ){
+	I18n.register = function( groupAlias, strings ){
 
 		this.storage[ groupAlias ] = strings;
 	};
 
-	app.I18n.ucfirst = function( str ){
+	I18n.ucfirst = function( str ){
 		var f = str.charAt(0).toUpperCase();
 		return f + str.substr(1, str.length-1);
 	};
 
-	app.I18n.monthByNum = function( num ){
+	I18n.monthByNum = function( num ){
 
-		return num > app.I18n.dictMonths.length - 1 ? false : app.I18n.dictMonths[ num ];
+		return num > I18n.dictMonths.length - 1 ? false : I18n.dictMonths[ num ];
 	};
 
-	app.I18n.dayByNum = function( num ){
-		return num > app.I18n.dictDays.length - 1 ? false : app.I18n.dictDays[ num ];
+	I18n.dayByNum = function( num ){
+		return num > I18n.dictDays.length - 1 ? false : I18n.dictDays[ num ];
 	};
 
 	/**
@@ -51,9 +55,9 @@ define( ["./Logger"], function() {
 	 * @param groupAlias
 	 * @param text
 	 */
-	app.I18n.formByNum = function( number, groupAlias, text ){
+	I18n.formByNum = function( number, groupAlias, text ){
 
-		text = app.I18n._get( groupAlias, text, true );
+		text = I18n._get( groupAlias, text, true );
 
 		var keys        = [2, 0, 1, 1, 1, 2],
 			mod         = number % 100,
@@ -62,22 +66,22 @@ define( ["./Logger"], function() {
 		return text[suffix_key];
 	};
 
-	app.I18n.getForm = function( groupAlias, text, key ){
+	I18n.getForm = function( groupAlias, text, key ){
 
-		text = app.I18n._get( groupAlias, text, true );
+		text = I18n._get( groupAlias, text, true );
 
 		return text[ Math.min( key, text.length ) ];
 	};
 
-	app.I18n._get = function( groupAlias, text, asArray ){
+	I18n._get = function( groupAlias, text, asArray ){
 
 		asArray = asArray || false;
 
 		var textNew = text + "";
 
-		if( app.I18n.storage[ groupAlias ] !== undefined && app.I18n.storage[ groupAlias ][ text ] !== undefined ){
+		if( I18n.storage[ groupAlias ] !== undefined && I18n.storage[ groupAlias ][ text ] !== undefined ){
 
-			textNew = app.I18n.storage[ groupAlias ][ text ];
+			textNew = I18n.storage[ groupAlias ][ text ];
 		}
 
 		if( asArray && !(textNew instanceof Array) ){
@@ -96,13 +100,13 @@ define( ["./Logger"], function() {
     /**
      *
      */
-    app.I18n.get = function( groupAlias, variable ){
+    I18n.get = function( groupAlias, variable ){
 
         var string  = variable + '';
 
-        if( app.I18n.storage[ groupAlias ] !== undefined && app.I18n.storage[ groupAlias ][ variable ] !== undefined ){
+        if( I18n.storage[ groupAlias ] !== undefined && I18n.storage[ groupAlias ][ variable ] !== undefined ){
 
-            string = app.I18n.storage[ groupAlias ][ variable ];
+            string = I18n.storage[ groupAlias ][ variable ];
         }
 
         // process format
@@ -112,7 +116,7 @@ define( ["./Logger"], function() {
 
             args.unshift( string );
 
-            string = app.I18n.format.apply( app.I18n, args );
+            string = I18n.format.apply( I18n, args );
         }
 
         return string;
@@ -124,7 +128,7 @@ define( ["./Logger"], function() {
      *
      *
      */
-    app.I18n.format = function( string ){
+    I18n.format = function( string ){
 
         var args    = Array.prototype.slice.call(arguments).splice( 1 ),
             string  = typeof string.substring != 'undefined' ? string : '';
@@ -146,8 +150,8 @@ define( ["./Logger"], function() {
                 tagFunc = '_' + tagName + 'Tag',
                 replaced  = false;
 
-            if( typeof app.I18n[tagFunc] == 'function' ){
-                replaced = app.I18n[tagFunc]( args[0], tagArgs );
+            if( typeof I18n[tagFunc] == 'function' ){
+                replaced = I18n[tagFunc]( args[0], tagArgs );
             } else {
                 throw new Error('Unsupported tag"' + tagName + '"');
             }
@@ -158,7 +162,7 @@ define( ["./Logger"], function() {
         return string;
     };
 
-    app.I18n._countTag = function( number, args ){
+    I18n._countTag = function( number, args ){
 
         var keys        = [2, 0, 1, 1, 1, 2],
             mod         = number % 100,
@@ -167,4 +171,6 @@ define( ["./Logger"], function() {
         return args[ suffix_key ];
     };
 
+
+    return I18n;
 });

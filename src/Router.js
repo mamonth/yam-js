@@ -18,33 +18,14 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.2.1
  */
-(function( factory ) {
-
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define( ['jquery','jquery-class', './Logger', './State'], factory );
-    } else if (typeof exports === 'object') {
-
-        var Class   = require('jquery-class'),
-            Logger  = require('./Logger'),
-            State   = require('./State'),
-            jQuery  = require('jquery');
-
-        // CommonJS
-        module.exports = factory( jQuery, Class, Logger, State );
-    } else {
-        // Browser globals
-        factory( jQuery, jQuery.Class, yam.Logger, yam.State );
-    }
-
-}( function( $, Class, Logger, State ) {
+define( 'yam/Router', ['jquery', 'jquery-class', 'yam/Logger', 'yam/State'], function( $, Class, Logger, State ) {
     'use strict';
 
     /**
      * @class yam.Route
      * @extends jQuery.Class
      */
-    Class.extend('yam.Route',
+    return Class.extend('yam.Route',
     /** @static **/
     {
         _rules: [],
@@ -302,5 +283,4 @@
         }
     });
 
-    return yam.Route;
-}));
+});

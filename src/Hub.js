@@ -5,32 +5,14 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.2.1
  */
-(function( factory ) {
-
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['jquery','jquery-class', './Logger'], factory);
-    } else if (typeof exports === 'object') {
-
-        var Class   = require('jquery-class'),
-            Logger  = require('./Logger'),
-            jQuery  = require('jquery');
-
-        // CommonJS
-        module.exports = factory( jQuery, Class, Logger );
-    } else {
-        // Browser globals
-        factory( jQuery, jQuery.Class, yam.Logger );
-    }
-
-}( function ( $, Class, Logger ) {
+define( 'yam/Hub', ['jquery','jquery-class','yam/Logger'], function ( $, Class, Logger ) {
     'use strict';
 
     /**
      * @class yam.Hub
      * @extends jQuery.Class
      */
-    Class.extend('yam.Hub',
+    return Class.extend('yam.Hub',
         /** @static **/
         {
             _nSpace     : '.yam',
@@ -112,5 +94,4 @@
         }
     );
 
-    return yam.Hub;
-}));
+});

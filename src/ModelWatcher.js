@@ -4,10 +4,9 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.0
  */
+define( 'yam/ModelWatcher', ['jquery-class', 'yam/AModel'], function ( Class, AModel ) {
 
-define( [ /* "app/Model" */ ], function () {
-
-    "use strict";
+    'use strict';
 
     /* experimenting on js exception handle */
     window.InvalidArgumentException = function( message ){
@@ -18,10 +17,11 @@ define( [ /* "app/Model" */ ], function () {
     window.InvalidArgumentException.prototype.name = 'InvalidArgumentException';
 
     /**
-     * @class app.ModelWatcher
+     * @class yam.ModelWatcher
+     * @extends jQuery.Class
      */
-    $.Class.extend("app.ModelWatcher",
-        /* @static */
+    Class.extend('yam.ModelWatcher',
+        /** @static **/
         {
             /**
              * Object
@@ -31,12 +31,12 @@ define( [ /* "app/Model" */ ], function () {
             /**
              * Register model instance to watcher
              *
-             * @param {app.AModel} modelInstance
+             * @param {yam.AModel} modelInstance
              */
             register: function( modelInstance ){
 
-                if( !( modelInstance instanceof app.AModel ) || undefined === modelInstance.Class.fullName )
-                    throw new InvalidArgumentException( this.fullName + " can handle only app.AModel instances");
+                if( !( modelInstance instanceof AModel ) || undefined === modelInstance.Class.fullName )
+                    throw new InvalidArgumentException( this.fullName + " can handle only yam.AModel instances");
 
                 var identity = modelInstance.getIdentityValue();
 
@@ -58,7 +58,7 @@ define( [ /* "app/Model" */ ], function () {
             has: function( classDef, identity ){
 
                 if( undefined === classDef.fullName )
-                    throw new InvalidArgumentException( this.fullName + " can handle only classes inherited from app.AModel ");
+                    throw new InvalidArgumentException( this.fullName + " can handle only classes inherited from yam.AModel ");
 
                 return !( undefined === this._storage[ classDef.fullName ] || undefined === this._storage[ classDef.fullName ][ identity ] );
             },
@@ -67,7 +67,7 @@ define( [ /* "app/Model" */ ], function () {
              *
              * @param classDef
              * @param identity
-             * @return {app.AModel}
+             * @return {yam.AModel}
              */
             get: function( classDef, identity ){
 
@@ -120,7 +120,7 @@ define( [ /* "app/Model" */ ], function () {
 
             },
             /**
-             * @param {app.AModel} modelInstance
+             * @param {yam.AModel} modelInstance
              */
             unregister: function( modelInstance ){
 

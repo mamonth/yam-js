@@ -22,7 +22,7 @@ module.exports = function(grunt) {
                     consolidate: true
                 }
             },
-            all: ['test/']
+            src: ['test/']
         },
         watch: {
             files: [
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
                 'src/Logger.js',
                 'test/Logger.test.js'
             ],
-            tasks: 'test'
+            tasks: 'test:src'
         },
         uglify: {
             options:{
@@ -40,7 +40,6 @@ module.exports = function(grunt) {
             main_target: {
                 files: {
                     'dist/yam.min.js': [
-                        'src/Core.js',
                         'src/Logger.js',
                         'src/Hub.js',
                         'src/State.js',
@@ -51,18 +50,18 @@ module.exports = function(grunt) {
                         'src/ModelList.js',
                         'src/IModule.js',
                         'src/ADeferredModule.js',
-                        'src/I18n.js'
+                        'src/I18n.js',
+                        'src/Core.js',
+                        'src/yam.js'
                     ]
                 }
             }
         }
-
     });
 
     grunt.loadNpmTasks('grunt-jasmine-node-new');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-//    grunt.loadNpmTasks('grunt-contrib-concat');
 
     grunt.registerTask('test', ['jasmine_node']);
 

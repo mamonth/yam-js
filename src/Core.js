@@ -6,36 +6,14 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.2
  */
-(function( factory ) {
-
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define( ['jquery','jquery-class', './Router', './State', './Logger', './IModule', './ADeferredModule'], factory );
-    } else if (typeof exports === 'object') {
-
-        var jQuery          = require('jquery'),
-            Class           = require('jquery-class'),
-            Router          = require('./Router'),
-            State           = require('./State'),
-            Logger          = require('./Logger'),
-            IModule         = require('./IModule'),
-            ADeferredModule = require('./ADeferredModule');
-
-        // CommonJS
-        module.exports = factory( jQuery, Class, Router, State, Logger, IModule, ADeferredModule );
-    } else {
-        // Browser globals
-        factory( jQuery, jQuery.Class, yam.Router, yam.State, yam.Logger, yam.IModule, yam.ADeferredModule );
-    }
-
-}( function( $, Class, Router, State, Logger, IModule, ADeferredModule ) {
+define( 'yam/Core', ['jquery', 'jquery-class', 'yam/Router', 'yam/State', 'yam/Logger', 'yam/ADeferredModule'], function( $, Class, Router, State, Logger, ADeferredModule ) {
     'use strict';
 
     /**
      * @class yam.Core
      * @extends jQuery.Class
      */
-    Class.extend( 'yam.Core',
+    return Class.extend( 'yam.Core',
         /** @static **/
         {
             _instance: undefined,
@@ -293,7 +271,7 @@
             },
 
             _getClassNameByModule: function (moduleName) {
-                var nameChunks = moduleName.split("/"), nameChunkCount = nameChunks.length;
+                var nameChunks = moduleName.split('/'), nameChunkCount = nameChunks.length;
 
                 if (this.options.baseNamespace) {
                     nameChunkCount = nameChunks.unshift(this.options.baseNamespace);
@@ -308,19 +286,18 @@
 
             _getModuleNameByClass: function (className) {
                 if (this.options.baseNamespace) {
-                    className = className.replace( this.options.baseNamespace + ".", "" );
+                    className = className.replace( this.options.baseNamespace + '.', '' );
                 }
 
-                var nameChunks = className.split( "." ), nameChunkCount = nameChunks.length;
+                var nameChunks = className.split( '.' ), nameChunkCount = nameChunks.length;
 
                 //while (nameChunkCount--) {
                     //nameChunks[ nameChunkCount ] = nameChunks[ nameChunkCount ].charAt(0).toLowerCase() + nameChunks[ nameChunkCount ].slice(1);
                 //}
 
-                return nameChunks.join("/");
+                return nameChunks.join('/');
             }
         }
     );
 
-    return yam.Core;
-}));
+});

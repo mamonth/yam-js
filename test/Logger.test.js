@@ -1,7 +1,15 @@
 'use strict';
 
-var Logger  = require( __dirname + '/../src/Logger.js');
+var requirejs = require('requirejs');
 
+requirejs.config({
+    baseUrl: __dirname + '/../',
+    paths: {
+        yam: 'src'
+    }
+});
+
+var Logger  = requirejs( 'yam/Logger');
 
 describe('Log levels', function() {
 

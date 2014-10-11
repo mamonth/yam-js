@@ -1,0 +1,27 @@
+{
+    "name": "yam-js",
+    "version": "0.4.0",
+    "homepage": "https://github.com/mamonth/yam-js",
+    "description": "Yet Another Mvc JavaScript Framework",
+    "main": "dist/yam.min.js",
+    "moduleType": [
+        "amd"
+    ],
+    "authors": [
+        "Andrew Tereshko <andrew.tereshko@gmail.com>"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "jquery": "latest",
+        "jquery-class": "https://github.com/mamonth/jquery-class.git",
+        "requirejs": "latest"
+    },
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "demos",
+        "docs"
+    ]
+}

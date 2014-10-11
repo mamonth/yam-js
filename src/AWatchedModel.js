@@ -3,15 +3,16 @@
  *
  * @version 0.3.0
  */
-define( ["./Observable","./ModelWatcher","./ModelList","./AModel"], function () {
+define( 'yam/AWatchedModel', ['yam/Observable','yam/ModelWatcher','yam/ModelList', 'yam/AModel'], function ( Observable, ModelWatcher, ModelList, AModel ) {
 
-    "use strict";
+    'use strict';
 
     /**
-     * @class app.AWatchedModel
+     * @class yam.AWatchedModel
+     * @extends yam.AModel
      */
-    app.AModel.extend("app.AWatchedModel",
-        /* @static */
+    return AModel.extend('yam.AWatchedModel',
+        /** @static **/
         {
             create: function(data){
 
@@ -65,7 +66,7 @@ define( ["./Observable","./ModelWatcher","./ModelList","./AModel"], function () 
             }
 
         },
-        /* @prototype */
+        /** @prototype **/
         {
 
             init: function (values) {
@@ -83,7 +84,4 @@ define( ["./Observable","./ModelWatcher","./ModelList","./AModel"], function () 
         }
     );
 
-    return app.AWatchedModel;
 });
-
-

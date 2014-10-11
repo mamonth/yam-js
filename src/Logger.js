@@ -3,23 +3,7 @@
  *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  */
-(function( factory ) {
-
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['jquery-class'], factory);
-    } else if (typeof exports === 'object') {
-
-        var Class = require('jquery-class');
-
-        // CommonJS
-        module.exports = factory( Class );
-    } else {
-        // Browser globals
-        factory( jQuery.Class );
-    }
-
-}( function ( Class ) {
+define('yam/Logger', ['jquery-class'], function ( Class ) {
     'use strict';
 
     // prepend local console link
@@ -98,5 +82,4 @@
         }
     );
 
-}));
-
+});

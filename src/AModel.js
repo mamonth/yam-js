@@ -4,30 +4,14 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.4
  */
-(function( factory ) {
-
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['./Observable'], factory);
-    } else if (typeof exports === 'object') {
-
-        var Observable = require('./Observable');
-
-        // CommonJS
-        module.exports = factory( Observable );
-    } else {
-        // Browser globals
-        factory( yam.Observable );
-    }
-
-}( function ( Observable ) {
+define( 'yam/AModel', ['yam/Observable'], function ( Observable ) {
     'use strict';
 
     /**
      * @class yam.AModel
      * @extends yam.Observable
      */
-    Observable.extend( 'yam.AModel',
+    return Observable.extend( 'yam.AModel',
         /** @static **/
         {
             properties: [],
@@ -270,6 +254,4 @@
         }
     );
 
-    return yam.AModel;
-}));
-
+});

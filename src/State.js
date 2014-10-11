@@ -3,31 +3,11 @@
  *
  * Simple static state handler.
  *
- * @example
- *
- * @
  * @since 0.3.2
  *
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  */
-(function( factory ) {
-
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['jquery','jquery-class'], factory);
-    } else if (typeof exports === 'object') {
-
-        var Class   = require('jquery-class'),
-            jQuery  = require('jquery');
-
-        // CommonJS
-        module.exports = factory( jQuery, Class );
-    } else {
-        // Browser globals
-        factory( jQuery, jQuery.Class );
-    }
-
-}( function( $, Class ) {
+define( 'yam/State', ['jquery', 'jquery-class'], function( $, Class ) {
     'use strict';
 
     /**
@@ -35,7 +15,7 @@
      * @extends jQuery.Class
      */
     Class.extend('yam.State',
-        /* @static */
+        /** @static **/
         {
             /**
              * Stack of states
@@ -150,7 +130,7 @@
                 }
             }
         },
-        /* @prototype */
+        /** @prototype **/
         {
             /**
              * @property {String}
@@ -184,4 +164,4 @@
     );
 
     return yam.State;
-}));
+});

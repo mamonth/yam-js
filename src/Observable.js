@@ -6,23 +6,7 @@
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  * @version 0.3.0
  */
-(function( factory ) {
-
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['jquery-class'], factory);
-    } else if (typeof exports === 'object') {
-
-        var Class = require('jquery-class');
-
-        // CommonJS
-        module.exports = factory( Class );
-    } else {
-        // Browser globals
-        factory( jQuery.Class );
-    }
-
-}( function ( Class ) {
+define( 'yam/Observable', ['jquery-class'], function ( Class ) {
 
     'use strict';
 
@@ -30,7 +14,7 @@
      * @class yam.Observable
      * @extends jQuery.Class
      */
-    Class.extend('app.Observable',
+    return Class.extend('app.Observable',
         /* @prototype */
         {
             /**
@@ -156,4 +140,4 @@
 
         });
 
-}));
+});
