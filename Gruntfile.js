@@ -48,6 +48,7 @@ module.exports = function(grunt) {
                         'src/AModel.js',
                         'src/AWatchedModel.js',
                         'src/ModelList.js',
+                        'src/ModelWatcher.js',
                         'src/IModule.js',
                         'src/ADeferredModule.js',
                         'src/I18n.js',

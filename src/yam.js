@@ -13,10 +13,10 @@
             'Hub',
             'Observable',
             'State',
-            'ModelWatcher',
             'ModelList',
             'AModel',
             'AWatchedModel',
+            'ModelWatcher',
             'Router',
             'I18n',
             'Core'
